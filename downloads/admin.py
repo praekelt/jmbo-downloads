@@ -5,4 +5,7 @@ from jmbo.admin import ModelBaseAdmin
 from downloads.models import Download
 
 
-admin.site.register(Download, ModelBaseAdmin)
+class DownloadAdmin(ModelBaseAdmin):
+    pass
+
+admin.site.register(Download, DownloadAdmin)

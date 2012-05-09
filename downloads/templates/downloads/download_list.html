@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n jmbo_inclusion_tags %} 
+
+{% block content %}
+    <div class="content download-list">
+            <div class="foundry-container foundry-listing-vertical">
+        
+                <div class="title">{% trans "Downloads" %}</div>
+                <div class="items">
+                    {% for object in object_list %}
+                        <div class="item download">
+                            <a href="{{ object.file.name }}">{{ object.title }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+        
+                {% pager page_obj %}
+            </div>
+    </div>
+{% endblock %}
