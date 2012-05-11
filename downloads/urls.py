@@ -14,7 +14,7 @@ urlpatterns = patterns('',
         name='downloads'
     ),
     url(
-	r'^downloads/(?P<file_name>[\w\.-]+)/$', 
+	r'^(?P<file_name>[\w\.-]+)/$', 
 	'downloads.views.download_request',
         {},
     ),

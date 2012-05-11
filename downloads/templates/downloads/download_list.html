@@ -9,7 +9,7 @@
                 <div class="items">
                     {% for object in object_list %}
                         <div class="item download">
-                            <a href="{{ object.file.name }}">{{ object.title }}</a>
+                            <a href="http://{{ request.META.HTTP_HOST }}/{{ object.file.name }}">{{ object.title }}</a>
                         </div>
                     {% endfor %}
                 </div>
