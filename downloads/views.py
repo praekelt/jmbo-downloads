@@ -1,4 +1,3 @@
-from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 import os.path
 
 from mimetypes import guess_type
@@ -6,6 +5,10 @@ from mimetypes import guess_type
 from django.db.models import F
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
+from django.utils.translation import ugettext as _
+
+from jmbo.view_modifiers import DefaultViewModifier
+from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 
 from downloads.models import Download
 
@@ -31,13 +34,16 @@ def download_request(request, file_name):
   
   return response
   
-  
-class AllDownloads(GenericObjectList):
+
+class ObjectList(GenericObjectList):
     
+    def get_extra_context(self, *args, **kwargs):
+        return {'title': _('Downloads')}
+        
     def get_queryset(self, *args, **kwargs):
-        return Download.objects.all()
+        return Download.permitted.all()
     
     def get_paginate_by(self, *args, **kwargs):
         return 20
 
-all_downloads = AllDownloads()
+object_list = ObjectList()

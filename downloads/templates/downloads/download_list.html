@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-{% load i18n jmbo_inclusion_tags %} 
+{% load i18n jmbo_inclusion_tags downloads_tags %} 
 
 {% block content %}
     <div class="content download-list">
-            <div class="foundry-container foundry-listing-vertical">
+            <div class="foundry-container foundry-menu-vertical">
         
-                <div class="title">{% trans "Downloads" %}</div>
+                <div class="title">{% trans title %}</div>
                 <div class="items">
-                    {% for object in object_list %}
-                        <div class="item download">
-                            <a href="http://{{ request.META.HTTP_HOST }}/{{ object.file.name }}">{{ object.title }}</a>
+                    {% for obj in object_list %}
+                        {% ifchanged obj.primary_category %}
+                            <div class='h3'>{{ obj.primary_category.title }}</div>
+                        {% endifchanged %}
+                        <div class="item item-download">
+                            {% download_detail obj %}
                         </div>
                     {% endfor %}
                 </div>

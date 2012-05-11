@@ -8,3 +8,6 @@ class Download(ModelBase):
     upload_to='downloads/',
     max_length=255
   )
+  
+  class Meta:
+      ordering = ['primary_category', 'title']
