@@ -12,7 +12,7 @@
                             <div class='h3'>{{ obj.primary_category.title }}</div>
                         {% endifchanged %}
                         <div class="item item-download">
-                            {% download_detail obj %}
+                            {% download_detail obj request %}
                         </div>
                     {% endfor %}
                 </div>
