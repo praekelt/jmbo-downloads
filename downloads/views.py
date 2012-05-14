@@ -5,35 +5,37 @@ from mimetypes import guess_type
 
 from django.db.models import F
 from django.core.files import File
-from django.conf.settings import MEDIA_ROOT
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 
-from PIL import Image
+import Image, ImageFont, ImageDraw
 
 from jmbo.view_modifiers import DefaultViewModifier
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 
-from downloads.models import Download
+from foundry.settings import MEDIA_ROOT
+
+from downloads.models import Download, DOWNLOAD_ROOT
 
 
-# root of all downloadable files
-DOWNLOAD_ROOT = 'downloads/'
 # where temporary downloadable files are kept
 TEMP_ROOT = 'tmp/'
 
 
 def download_request(request, file_name):
-  download = Download.objects.get(file=os.path.join(DOWNLOAD_ROOT,file_name))
+  file_path = os.path.join(DOWNLOAD_ROOT,file_name)
+  # check if download is not temporary
+  try:
+    download = Download.objects.get(file=file_path)    
+    # increment view count
+    download.view_count += 1
+    download.save()
+    f = download.file
+  except Download.DoesNotExist:
+    pass
   
-  # increment view count
-  download.view_count += 1
-  download.save()
-  
-  f = download.file
-  
-  mime = guess_type(f.name)
+  mime = guess_type(file_name)
   response = HttpResponse(content_type=mime[0])
   
   # check if it has encoding
@@ -41,7 +43,7 @@ def download_request(request, file_name):
     response['Content-Encoding'] = mime[1]
   response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(file_name)
   response['Cache-Control'] = 'no-cache'
-  response['X-Accel-Redirect'] = smart_str(f.url)
+  response['X-Accel-Redirect'] = smart_str(os.path.join('/media/', file_path))
   
   return response
   
@@ -54,14 +56,14 @@ class ImageModView(object):
         if id_number:
             return str(uuid.UUID(int=id_number)) + '.jpg'
         else: 
-            return uuid.uuid4() + '.jpg'
+            return str(uuid.uuid4()) + '.jpg'
         
     # override this for different modifications and return image
     def create_modified_image(self, *args, **kwargs):
         pass
         
     def download_modified_image(self, request, id_number, *args, **kwargs):
-        file_name = make_file_name(id_number)
+        file_name = self.make_file_name(id_number)
         file_path = os.path.join(self.IMAGE_MOD_ROOT, file_name)
         # check if file exists
         try:
@@ -69,26 +71,65 @@ class ImageModView(object):
             f.close()
         # if not, create the file
         except IOError:
-            image = create_modified_image(args, kwargs)
+            image = self.create_modified_image(*args, **kwargs)
             image.save(file_path)
             
         return download_request(request, os.path.join(TEMP_ROOT, file_name))
         
-    def __call__(self, request, id_number=None, *args, **kwargs):
-        return download_modified_image(request, id_number, *args, **kwargs)
+    def __call__(self, request, id_number, *args, **kwargs):
+        return self.download_modified_image(request, id_number, *args, **kwargs)
 
         
 class TextOverlayImageModView(ImageModView):
     
     # text_box = (x, y, width, height); base_image = Django FileField instance
-    def __init__(self, text_box, base_image):
-        self.base_image = Image.open(base_image.url)
+    def __init__(self, font, text_size, color, text_box, base_image):
+        #self.base_image = Image.open(base_image.url)
+        self.base_image = base_image
         self.text_box = text_box
+        self.font = ImageFont.truetype(font, text_size)
+        self.color = color
             
     def create_modified_image(self, text):
-        image =  self.base_image.copy()
+        image = self.base_image.copy()
+        draw =  ImageDraw.Draw(image)
+        # draw text with line breaking
+        height = 0
+        line = ''
+        for word in text.split(' '):
+            size = self.font.getsize(line + word)
+            if size[0] > self.text_box[2]:
+                draw.text(
+                    (self.text_box[0], self.text_box[1] + height), 
+                    line[0:-1], 
+                    font=self.font, 
+                    fill=self.color
+                )
+                line = word + ' '
+                height += size[1]
+            else:
+                line += word + ' '
+        draw.text(
+            (self.text_box[0], self.text_box[1] + height), 
+            line[0:-1], 
+            font=self.font, 
+            fill=self.color
+        )
+        del draw
+        
         return image
-    
+        
+    def __call__(self, request, id_number, text):
+        return super(TextOverlayImageModView, self).__call__(request, id_number, text)
+
+text_overlay = TextOverlayImageModView(
+    "/usr/share/fonts/truetype/msttcorefonts/impact.ttf", 
+    40, 
+    (255, 255, 255), 
+    (0, 0, 200, 200), 
+    Image.open(os.path.join(os.path.join(MEDIA_ROOT, DOWNLOAD_ROOT), "1_800x600.jpg"))
+)
+
 
 class ObjectList(GenericObjectList):
     

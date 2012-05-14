@@ -2,7 +2,10 @@ from django.db import models
 
 from jmbo.models import ModelBase
 
-from downloads.views import DOWNLOAD_ROOT
+
+# root of all downloadable files
+DOWNLOAD_ROOT = 'downloads/'
+
 
 class Download(ModelBase):
   file = models.FileField(
