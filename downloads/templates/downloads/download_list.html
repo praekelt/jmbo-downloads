@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n jmbo_inclusion_tags downloads_tags %} 
+{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags %} 
 
 {% block content %}
     <div class="content download-list">
@@ -9,10 +9,10 @@
                 <div class="items">
                     {% for obj in object_list %}
                         {% ifchanged obj.primary_category %}
-                            <div class='h3'>{{ obj.primary_category.title }}</div>
+                            <div class="h3">{{ obj.primary_category.title }}</div>
                         {% endifchanged %}
                         <div class="item item-download">
-                            {% download_detail obj request %}
+                            {% render_object obj.as_leaf_class "list_item" %}
                         </div>
                     {% endfor %}
                 </div>

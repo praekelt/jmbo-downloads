@@ -46,7 +46,21 @@ def download_request(request, file_name):
   response['X-Accel-Redirect'] = smart_str(os.path.join('/media/', file_path))
   
   return response
-  
+
+
+class ObjectList(GenericObjectList):
+    
+    def get_extra_context(self, *args, **kwargs):
+        return {'title': _('Downloads')}
+        
+    def get_queryset(self, *args, **kwargs):
+        return Download.permitted.all()
+    
+    def get_paginate_by(self, *args, **kwargs):
+        return 20
+
+object_list = ObjectList()
+
 
 class ImageModView(object):
     # absolute path to modified image files
@@ -82,13 +96,16 @@ class ImageModView(object):
         
 class TextOverlayImageModView(ImageModView):
     
-    # text_box = (x, y, width, height); base_image = Django FileField instance
-    def __init__(self, font, text_size, color, text_box, base_image):
+    # box = (x, y, width, height); base_image = Django FileField instance
+    def __init__(self, font, text_size, color, box, base_image):
         #self.base_image = Image.open(base_image.url)
         self.base_image = base_image
-        self.text_box = text_box
+        self.box = box
         self.font = ImageFont.truetype(font, text_size)
         self.color = color
+        
+    def draw_text(drawable, pos, text):
+        drawable.text(pos, text, font=self.font, fill=self.color)
             
     def create_modified_image(self, text):
         image = self.base_image.copy()
@@ -98,23 +115,13 @@ class TextOverlayImageModView(ImageModView):
         line = ''
         for word in text.split(' '):
             size = self.font.getsize(line + word)
-            if size[0] > self.text_box[2]:
-                draw.text(
-                    (self.text_box[0], self.text_box[1] + height), 
-                    line[0:-1], 
-                    font=self.font, 
-                    fill=self.color
-                )
+            if size[0] > self.box[2]:
+                self.draw_text(draw, (self.box[0], self.box[1] + height), line[0:-1])
                 line = word + ' '
                 height += size[1]
             else:
                 line += word + ' '
-        draw.text(
-            (self.text_box[0], self.text_box[1] + height), 
-            line[0:-1], 
-            font=self.font, 
-            fill=self.color
-        )
+        self.draw_text(draw, (self.box[0], self.box[1] + height), line[0:-1])
         del draw
         
         return image
@@ -129,17 +136,3 @@ text_overlay = TextOverlayImageModView(
     (0, 0, 200, 200), 
     Image.open(os.path.join(os.path.join(MEDIA_ROOT, DOWNLOAD_ROOT), "1_800x600.jpg"))
 )
-
-
-class ObjectList(GenericObjectList):
-    
-    def get_extra_context(self, *args, **kwargs):
-        return {'title': _('Downloads')}
-        
-    def get_queryset(self, *args, **kwargs):
-        return Download.permitted.all()
-    
-    def get_paginate_by(self, *args, **kwargs):
-        return 20
-
-object_list = ObjectList()
