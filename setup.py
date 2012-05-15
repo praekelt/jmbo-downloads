@@ -11,7 +11,7 @@ setup(
     url='http://github.com/praekelt/jmbo-downloads',
     packages = find_packages(),
     install_requires = [
-        
+        'django-colors',
     ],
     include_package_data=True,
     tests_require=[

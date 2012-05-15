@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.auth.decorators import login_required
 
-from downloads.views import object_list, text_overlay
+from downloads.views import object_list, image_mod, download_request
 
 
 urlpatterns = patterns('',
@@ -14,13 +14,13 @@ urlpatterns = patterns('',
         name='downloads'
     ),
     url(
-        r'^test_image/$',
-        text_overlay,
-        {"id_number":None, "text":"Awesomeness!", "re_file_name":"your-wallpaper.jpg"},
+        r'^image-mod/(?P<slug>[\w-]+)$',
+        login_required(image_mod),
+        {},
     ),
     url(
 	r'^(?P<file_name>[\w\.-]+)/$', 
-	'downloads.views.download_request',
+	login_required(download_request),
         {},
     ),
 )
