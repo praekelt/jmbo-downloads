@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     url(
         r'^test_image/$',
         text_overlay,
-        {"id_number":None, "text":"Awesomeness!"},
+        {"id_number":None, "text":"Awesomeness!", "re_file_name":"your-wallpaper.jpg"},
     ),
     url(
 	r'^(?P<file_name>[\w\.-]+)/$', 

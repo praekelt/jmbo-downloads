@@ -15,3 +15,7 @@ class Download(ModelBase):
   
   class Meta:
       ordering = ['primary_category', 'title']
+
+
+class ImageMod(models.Model):
+    pass

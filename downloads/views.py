@@ -23,7 +23,7 @@ from downloads.models import Download, DOWNLOAD_ROOT
 TEMP_ROOT = 'tmp/'
 
 
-def download_request(request, file_name):
+def download_request(request, file_name, re_file_name=None):
   file_path = os.path.join(DOWNLOAD_ROOT,file_name)
   # check if download is not temporary
   try:
@@ -41,7 +41,10 @@ def download_request(request, file_name):
   # check if it has encoding
   if mime[1]:
     response['Content-Encoding'] = mime[1]
-  response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(file_name)
+  if re_file_name:
+    response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(re_file_name)
+  else:
+    response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(os.path.basename(file_name))
   response['Cache-Control'] = 'no-cache'
   response['X-Accel-Redirect'] = smart_str(os.path.join('/media/', file_path))
   
@@ -76,7 +79,7 @@ class ImageModView(object):
     def create_modified_image(self, *args, **kwargs):
         pass
         
-    def download_modified_image(self, request, id_number, *args, **kwargs):
+    def download_modified_image(self, request, id_number, re_file_name, *args, **kwargs):
         file_name = self.make_file_name(id_number)
         file_path = os.path.join(self.IMAGE_MOD_ROOT, file_name)
         # check if file exists
@@ -88,10 +91,10 @@ class ImageModView(object):
             image = self.create_modified_image(*args, **kwargs)
             image.save(file_path)
             
-        return download_request(request, os.path.join(TEMP_ROOT, file_name))
+        return download_request(request, os.path.join(TEMP_ROOT, file_name), re_file_name)
         
-    def __call__(self, request, id_number, *args, **kwargs):
-        return self.download_modified_image(request, id_number, *args, **kwargs)
+    def __call__(self, request, id_number, re_file_name, *args, **kwargs):
+        return self.download_modified_image(request, id_number, re_file_name, *args, **kwargs)
 
         
 class TextOverlayImageModView(ImageModView):
@@ -104,7 +107,7 @@ class TextOverlayImageModView(ImageModView):
         self.font = ImageFont.truetype(font, text_size)
         self.color = color
         
-    def draw_text(drawable, pos, text):
+    def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self.font, fill=self.color)
             
     def create_modified_image(self, text):
@@ -126,8 +129,8 @@ class TextOverlayImageModView(ImageModView):
         
         return image
         
-    def __call__(self, request, id_number, text):
-        return super(TextOverlayImageModView, self).__call__(request, id_number, text)
+    def __call__(self, request, id_number, re_file_name, text):
+        return super(TextOverlayImageModView, self).__call__(request, id_number, re_file_name, text)
 
 text_overlay = TextOverlayImageModView(
     "/usr/share/fonts/truetype/msttcorefonts/impact.ttf", 
