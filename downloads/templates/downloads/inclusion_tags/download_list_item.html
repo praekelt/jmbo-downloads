@@ -1,6 +1,6 @@
 <div class="download rich object-detail-inclusion download-detail-inclusion">
     <div class="title">
-        <a href="http://{{ request.META.HTTP_HOST }}/{{ object.file.name }}">{{ object.title }}</a>
+        <a href="http://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">{{ object.title }}</a>
     </div>
     <div class="meta">
         <span class="filesize">{% widthratio object.file.size 1024.0 1 %} kB</span><br />

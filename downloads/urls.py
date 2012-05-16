@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.auth.decorators import login_required
 
-from downloads.views import object_list, image_mod, download_request
+from downloads.views import object_list, download_request
 
 
 urlpatterns = patterns('',
@@ -14,12 +14,7 @@ urlpatterns = patterns('',
         name='downloads'
     ),
     url(
-        r'^image-mod/(?P<slug>[\w-]+)$',
-        login_required(image_mod),
-        {},
-    ),
-    url(
-	r'^(?P<file_name>[\w\.-]+)/$', 
+	r'^(?P<slug>[\w-]+)/$', 
 	login_required(download_request),
         {},
     ),

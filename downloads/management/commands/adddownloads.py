@@ -56,10 +56,11 @@ class Command(BaseCommand):
                 for name in files:
                     self.stdout.write('Adding ' + root + '/' + name + '\n')
                     download = Download(title=name, primary_category=category, state=state)
-                    download.file.save(name, File(open(os.path.join(root, name))))
-                    download.save()
                     for site in sites:
                         download.sites.add(site)
+                    f = open(os.path.join(root, name))
+                    download.file.save(name, File(f))
+                    f.close()
                     count += 1
                 if not options['recursive']:
                     break            

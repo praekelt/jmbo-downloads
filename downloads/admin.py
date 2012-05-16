@@ -9,5 +9,9 @@ class DownloadAdmin(ModelBaseAdmin):
     pass
 
 
+class ImageModAdmin(ModelBaseAdmin):
+    pass
+
+    
 admin.site.register(Download, DownloadAdmin)
-admin.site.register(TextOverlayImageMod, ModelBaseAdmin)
+admin.site.register(TextOverlayImageMod, ImageModAdmin)
