@@ -41,6 +41,7 @@ class Download(ModelBase):
     def get_absolute_url(self):
         return '/downloads/' + self.slug
 
+    # return 2-tuple containing the file and response file name
     def get_file(self, request):
         if self.file_name:
             return (self.file, self.file_name)
@@ -51,14 +52,17 @@ class Download(ModelBase):
 # abstract base class for image mods
 class ImageMod(Download):
     unique_per_user = models.BooleanField(default=False)
+    
+    class Meta(Download.Meta):
+        abstract = True
         
     def make_file_name(self, request):
         if self.unique_per_user:
-            return str(uuid.UUID(int=request.user.id)) + '.jpg'
+            return str(uuid.UUID(int=request.user.id)) + '.jpg' # will take out hardcoding of file type later, if necessary
         else: 
             return str(uuid.uuid4()) + '.jpg'
 
-    # override this in subclasses for different modifications and save resulting image in tmp
+    # override this in subclasses and save resulting image in tmp
     def create_modified_image(self, file_path):
         pass
 
@@ -97,7 +101,7 @@ class TextOverlayImageMod(ImageMod):
         self._image = Image.open(os.path.join(settings.MEDIA_ROOT, self.background_image.name))
         self._box = (self.x, self.y, self.width, self.height)
         self._font = ImageFont.truetype(self.font, self.font_size)
-        self._line_height = int(self.font_size + 0.1 * self.font_size)
+        self._line_height = int(self.font_size + 0.04 * self.font_size)
         self._colour = '#' + str(self.colour)
 
     def draw_text(self, drawable, pos, text):
