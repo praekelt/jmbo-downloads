@@ -101,7 +101,7 @@ class TextOverlayImageMod(ImageMod):
         self._image = Image.open(os.path.join(settings.MEDIA_ROOT, self.background_image.name))
         self._box = (self.x, self.y, self.width, self.height)
         self._font = ImageFont.truetype(self.font, self.font_size)
-        self._line_height = int(self.font_size + 0.04 * self.font_size)
+        self._line_height = int(self.font_size * 0.85)
         self._colour = '#' + str(self.colour)
 
     def draw_text(self, drawable, pos, text):
