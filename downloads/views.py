@@ -26,7 +26,9 @@ def download_request(request, slug):
     if mime[1]:
         response['Content-Encoding'] = mime[1]
     response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(file_name)
-    response['Cache-Control'] = 'no-cache'
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Expires'] = '0'
+    response['Pragma'] = 'no-store, no-cache'
     response['X-Accel-Redirect'] = smart_str(f.url)
 
     return response
