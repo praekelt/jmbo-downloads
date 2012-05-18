@@ -1,11 +1,10 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.defaults import patterns, url
 from django.contrib.auth.decorators import login_required
 
 from downloads.views import object_list, download_request
 
 
 urlpatterns = patterns('',
-
     # download url
     url(
         r'^$',
