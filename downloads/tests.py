@@ -33,4 +33,5 @@ class DownloadsTestCase(TestCase):
         response = self.client.get(reverse('download_request', kwargs={
             'file_name': download.file.name,
         }))
-        self.assertEqual(response['X-Accel-Redirect'], 'bla')
+        self.assertEqual(response['X-Accel-Redirect'], os.path.join(
+            settings.MEDIA_ROOT, download.file.name))
