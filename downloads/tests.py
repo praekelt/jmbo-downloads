@@ -29,9 +29,10 @@ class DownloadsTestCase(TestCase):
                                                 file_path), 'test_file.py'))
 
     def test_header_is_being_set(self):
-        download = self.make_download()
+        dl = self.make_download()
+        file_name = dl.file.name.split('/', 1)[1]
         response = self.client.get(reverse('download_request', kwargs={
-            'file_name': 'test_file.py',
+            'file_name': file_name,
         }))
-        self.assertEqual(response['X-Accel-Redirect'], os.path.join(
-            settings.MEDIA_ROOT, download.file.name))
+        self.assertEqual(response['X-Accel-Redirect'],
+            '/media/downloads/%s' % (file_name,))
