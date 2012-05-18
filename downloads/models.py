@@ -52,14 +52,15 @@ class Download(ModelBase):
 # abstract base class for image mods
 class ImageMod(Download):
     unique_per_user = models.BooleanField(default=False)
-    
+
     class Meta(Download.Meta):
         abstract = True
-        
+
     def make_file_name(self, request):
+        # will take out hardcoding of file type later, if necessary
         if self.unique_per_user:
-            return str(uuid.UUID(int=request.user.id)) + '.jpg' # will take out hardcoding of file type later, if necessary
-        else: 
+            return str(uuid.UUID(int=request.user.id)) + '.jpg'
+        else:
             return str(uuid.uuid4()) + '.jpg'
 
     # override this in subclasses and save resulting image in tmp
@@ -68,7 +69,8 @@ class ImageMod(Download):
 
     def get_file(self, request):
         file_name = self.make_file_name(request)
-        file_path = os.path.join(os.path.join(settings.MEDIA_ROOT, TEMP_ROOT), file_name)
+        file_path = os.path.join(os.path.join(settings.MEDIA_ROOT,
+            TEMP_ROOT), file_name)
         # check if file exists
         try:
             f = open(file_path)
@@ -78,7 +80,7 @@ class ImageMod(Download):
             self.create_modified_image(file_path)
         # not saved to db since the files are temporary
         self.file.name = os.path.join(TEMP_ROOT, file_name)
-            
+
         return super(ImageMod, self).get_file(request)
 
 
@@ -98,7 +100,8 @@ class TextOverlayImageMod(ImageMod):
 
     def save(self, *args, **kwargs):
         super(TextOverlayImageMod, self).save(*args, **kwargs)
-        self._image = Image.open(os.path.join(settings.MEDIA_ROOT, self.background_image.name))
+        self._image = Image.open(os.path.join(settings.MEDIA_ROOT,
+            self.background_image.name))
         self._box = (self.x, self.y, self.width, self.height)
         self._font = ImageFont.truetype(self.font, self.font_size)
         self._line_height = int(self.font_size * 0.85)
@@ -116,7 +119,8 @@ class TextOverlayImageMod(ImageMod):
         for word in self.text.split(' '):
             size = draw.textsize(line + word, font=self._font)
             if size[0] > self._box[2]:
-                self.draw_text(draw, (self._box[0], self._box[1] + height), line[0:-1])
+                self.draw_text(draw,
+                    (self._box[0], self._box[1] + height), line[0:-1])
                 line = word + ' '
                 height += self._line_height
             else:

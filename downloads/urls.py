@@ -9,12 +9,11 @@ urlpatterns = patterns('',
     url(
         r'^$',
         login_required(object_list),
-        {},
         name='downloads'
     ),
     url(
-	r'^(?P<slug>[\w-]+)/$', 
-	login_required(download_request),
-        {},
+        r'^(?P<slug>[\w-]+)/$',
+        login_required(download_request),
+        name='download_request'
     ),
 )

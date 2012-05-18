@@ -7,16 +7,18 @@ from downloads.models import Download, TextOverlayImageMod
 
 
 class DownloadAdminForm(ModelBaseAdminForm):
-   class Meta(ModelBaseAdminForm.Meta):
+    class Meta(ModelBaseAdminForm.Meta):
         model = Download
+
 
 class TOIMAdminForm(ModelBaseAdminForm):
     class Meta(ModelBaseAdminForm.Meta):
         model = TextOverlayImageMod
 
+
 class DownloadAdmin(ModelBaseAdmin):
     form = DownloadAdminForm
-    
+
     def __init__(self, model, admin_site):
         super(DownloadAdmin, self).__init__(model, admin_site)
         # magic that should go into ModelBaseAdmin at later stage
@@ -25,10 +27,11 @@ class DownloadAdmin(ModelBaseAdmin):
                 try:
                     fields = self.fieldsets[0][1]['fields']
                     i = fields.index(field)
-                    self.fieldsets[0][1]['fields'] = fields[0:i] + fields[i+1:]
+                    self.fieldsets[0][1]['fields'] = fields[0:i] + \
+                        fields[i + 1:]
                 except:
                     continue
-                
+
     def queryset(self, request):
         qs = super(DownloadAdmin, self).queryset(request)
         pks = set()
@@ -36,12 +39,12 @@ class DownloadAdmin(ModelBaseAdmin):
             if obj.__class__ is obj.as_leaf_class().__class__:
                 pks.add(obj.pk)
         return qs.filter(pk__in=pks)
-        
+
 
 class ImageModAdmin(DownloadAdmin):
-    exclude = ('file',) # file is generated
-    
-    
+    exclude = ('file',)  # file is generated
+
+
 class TextOverlayImageModAdmin(ImageModAdmin):
     form = TOIMAdminForm
 
@@ -54,11 +57,12 @@ class TextOverlayImageModAdmin(ImageModAdmin):
                 try:
                     fields = self.fieldsets[0][1]['fields']
                     i = fields.index(field)
-                    self.fieldsets[0][1]['fields'] = fields[0:i] + fields[i+1:]
+                    self.fieldsets[0][1]['fields'] = fields[0:i] + \
+                        fields[i + 1:]
                 except:
                     continue
         self.fieldsets[0][1]['fields'] += one_liners
 
-    
+
 admin.site.register(Download, DownloadAdmin)
 admin.site.register(TextOverlayImageMod, TextOverlayImageModAdmin)

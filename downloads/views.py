@@ -9,12 +9,12 @@ from jmbo.generic.views import GenericObjectList
 from downloads.models import Download
 
 
-def download_request(request, slug): 
+def download_request(request, slug):
     download = Download.permitted.get(slug=slug).as_leaf_class()
     # increment view count
     download.view_count += 1
     download.save()
-    
+
     f, file_name = download.get_file(request)
 
     mime = guess_type(f.name)
@@ -23,7 +23,8 @@ def download_request(request, slug):
     # check if it has encoding
     if mime[1]:
         response['Content-Encoding'] = mime[1]
-    response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(file_name)
+    response['Content-Disposition'] = 'attachment; \
+        filename="%s"' % smart_str(file_name)
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Expires'] = '0'
     response['Pragma'] = 'no-store, no-cache'
