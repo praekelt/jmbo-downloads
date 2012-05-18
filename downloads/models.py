@@ -11,7 +11,7 @@ import ImageDraw
 
 from jmbo.models import ModelBase
 
-from colors.fields import ColorField
+from downloads.fields import ColourField
 
 
 # root of all downloadable files
@@ -94,7 +94,7 @@ class TextOverlayImageMod(ImageMod):
         recursive=True
     )
     font_size = models.PositiveIntegerField()
-    colour = ColorField()
+    colour = ColourField()
 
     def save(self, *args, **kwargs):
         super(TextOverlayImageMod, self).save(*args, **kwargs)
@@ -102,7 +102,7 @@ class TextOverlayImageMod(ImageMod):
         self._box = (self.x, self.y, self.width, self.height)
         self._font = ImageFont.truetype(self.font, self.font_size)
         self._line_height = int(self.font_size * 0.85)
-        self._colour = '#' + str(self.colour)
+        self._colour = str(self.colour)
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)

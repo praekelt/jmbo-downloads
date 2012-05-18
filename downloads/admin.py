@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models.query import QuerySet
 
 from jmbo.admin import ModelBaseAdmin, ModelBaseAdminForm
 
@@ -26,9 +27,19 @@ class DownloadAdmin(ModelBaseAdmin):
                     self.fieldsets[0][1]['fields'] = fields[0:i] + fields[i+1:]
                 except:
                     continue
+                
+    def queryset(self, request):
+        qs = super(DownloadAdmin, self).queryset(request)
+        pks = set()
+        for obj in qs:
+            if obj.__class__ is obj.as_leaf_class().__class__:
+                pks.add(obj.pk)
+        return qs.filter(pk__in=pks)
+        
 
 class ImageModAdmin(DownloadAdmin):
     exclude = ('file',) # file is generated
+    
     
 class TextOverlayImageModAdmin(ImageModAdmin):
     form = TOIMAdminForm
