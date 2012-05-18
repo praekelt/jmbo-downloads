@@ -18,6 +18,7 @@ setup(
     include_package_data=True,
     tests_require=[
         'django-setuptest',
+        'coverage',
     ],
     test_suite="setuptest.SetupTestSuite",
     classifiers=[
