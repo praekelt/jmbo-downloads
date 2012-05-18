@@ -4,14 +4,16 @@ setup(
     name='jmbo-downloads',
     version='0.0.1',
     description='Downloads for Jmbo.',
-    long_description = open('README.rst', 'r').read() + open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
+    long_description = (open('README.rst', 'r').read() +
+                        open('AUTHORS.rst', 'r').read() +
+                        open('CHANGELOG.rst', 'r').read()),
     author='Praekelt Foundation',
     author_email='dev@praekelt.com',
     license='BSD',
     url='http://github.com/praekelt/jmbo-downloads',
     packages = find_packages(),
     install_requires = [
-        
+        "jmbo-foundry",
     ],
     include_package_data=True,
     tests_require=[
