@@ -12,7 +12,7 @@
                             <div class="h3">{{ obj.primary_category.title }}</div>
                         {% endifchanged %}
                         <div class="item item-download">
-                            {% render_object obj.as_leaf_class "list_item" %}
+                            {% render_object obj "list_item" %}
                         </div>
                     {% endfor %}
                 </div>
