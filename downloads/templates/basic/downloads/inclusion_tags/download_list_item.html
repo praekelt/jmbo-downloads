@@ -1,5 +1,5 @@
 {% if object.image %}
-    <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">
+    <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}" alt="{{ object.title }}" class="left">
         <img src="{{ object.get_download_list_url }}" />
     </a>
 {% endif %}
