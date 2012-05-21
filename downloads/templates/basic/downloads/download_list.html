@@ -10,7 +10,7 @@
                     {% for obj in object_list %}
                         {% ifchanged obj.primary_category %}
                             {% if obj.primary_category %}
-                                <div class="h3 item">{{ obj.primary_category.title }}</div>
+                                <div class="h3 item-nothumb">{{ obj.primary_category.title }}</div>
                             {% endif %}
                         {% endifchanged %}
                         <div class="{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
