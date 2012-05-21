@@ -47,7 +47,7 @@ class DownloadsTestCase(TestCase):
     def test_header_is_being_set(self):
         dl = self.make_download()
         slug = dl.slug
-        response = self.client.get(reverse('download_request', args=(slug,)))
+        response = self.client.get(reverse('download-request', args=(slug,)))
         self.assertEqual(response['X-Accel-Redirect'],
             '%sdownloads/%s' % (settings.MEDIA_URL,
             os.path.basename(dl.file.name)))
