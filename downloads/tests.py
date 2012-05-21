@@ -16,8 +16,9 @@ class DownloadsTestCase(TestCase):
     def setUp(self):
         self.username = 'username'
         self.password = 'password'
-        self.user = User.objects.create_user(self.username, self.password,
-                                                'user@host.com')
+        self.user = User.objects.create_user(
+            self.username, 'user@host.com', self.password
+        )
         self.client = Client()
         self.client.login(username=self.username, password=self.password)
 
@@ -34,6 +35,15 @@ class DownloadsTestCase(TestCase):
         dl.sites.add(Site.objects.all()[0])
         return dl
 
+    def test_authentication_required(self):
+        self.client.logout()
+        dl = self.make_download()
+        file_name = dl.file.name.split('/', 1)[1]
+        response = self.client.get(
+            reverse('download_request', kwargs={'file_name': file_name})
+        )
+        self.assertEqual(response.status_code, 302)
+        
     def test_header_is_being_set(self):
         dl = self.make_download()
         slug = dl.slug
@@ -41,3 +51,10 @@ class DownloadsTestCase(TestCase):
         self.assertEqual(response['X-Accel-Redirect'],
             '%sdownloads/%s' % (settings.MEDIA_URL,
             os.path.basename(dl.file.name)))
+
+    def test_duplicate_filenames(self):
+        """Two files with the same name are uploaded"""
+        dl1 = self.make_download()
+        dl2 = self.make_download()
+        self.assertNotEqual(dl1.file.path, dl2.file.path)
+

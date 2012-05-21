@@ -3,6 +3,7 @@ from mimetypes import guess_type
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.contrib.auth.decorators import login_required
 
 from jmbo.generic.views import GenericObjectList
 
@@ -11,6 +12,7 @@ from downloads.models import Download
 
 def download_request(request, slug):
     download = Download.permitted.get(slug=slug).as_leaf_class()
+
     # increment view count
     download.view_count += 1
     download.save()
