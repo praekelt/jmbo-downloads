@@ -3,15 +3,17 @@
 
 {% block content %}
     <div class="content download-list">
-            <div class="foundry-container foundry-menu foundry-menu-vertical">
+            <div class="foundry-container foundry-listing-vertical-thumbnail">
         
                 <div class="title">{% trans title %}</div>
                 <div class="items">
                     {% for obj in object_list %}
                         {% ifchanged obj.primary_category %}
-                            <div class="h3">{{ obj.primary_category.title }}</div>
+                            {% if obj.primary_category %}
+                                <div class="h3">{{ obj.primary_category.title }}</div>
+                            {% endif %}
                         {% endifchanged %}
-                        <div class="item item-download">
+                        <div class="item item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
                             {% render_object obj "list_item" %}
                         </div>
                     {% endfor %}

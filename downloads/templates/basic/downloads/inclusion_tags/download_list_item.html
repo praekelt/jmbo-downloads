@@ -1,16 +1,14 @@
-<div class="download rich object-detail-inclusion download-detail-inclusion">
-    <div class="title">
-        <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">{{ object.title }}</a>
-    </div>
-    {% if object.image %}
-        <div class="image">
-            <img src="{{ object.get_download_list_url }}" />
-        </div>
+{% if object.image %}
+    <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">
+        <img src="{{ object.get_download_list_url }}" />
+    </a>
+{% endif %}
+<div class="title">
+    <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">{{ object.title }}</a>
+</div>
+<div class="meta">
+    {% if object.file %}
+        <span class="filesize">{% widthratio object.file.size 1024.0 1 %} kB</span><br />
     {% endif %}
-    <div class="meta">
-        {% if object.file %}
-            <span class="filesize">{% widthratio object.file.size 1024.0 1 %} kB</span><br />
-        {% endif %}
-        <span class="download-count">{{ object.view_count }} downloads</span>
-    </div>
+    <span class="download-count">{{ object.view_count }} downloads</span>
 </div>
