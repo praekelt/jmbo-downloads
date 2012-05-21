@@ -2,6 +2,11 @@
     <div class="title">
         <a href="http{% if request.is_secure %}s{% endif %}://{{ request.META.HTTP_HOST }}/downloads/{{ object.slug }}">{{ object.title }}</a>
     </div>
+    {% if object.image %}
+        <div class="image">
+            <img src="{{ object.get_download_list_url }}" />
+        </div>
+    {% endif %}
     <div class="meta">
         {% if object.file %}
             <span class="filesize">{% widthratio object.file.size 1024.0 1 %} kB</span><br />
