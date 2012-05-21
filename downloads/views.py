@@ -4,12 +4,14 @@ from mimetypes import guess_type
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.contrib.auth.decorators import login_required
 
 from jmbo.generic.views import GenericObjectList
 
 from downloads.models import Download
 
 
+@login_required
 def download_request(request, file_name):
     download = Download.objects.get(file=os.path.join('downloads', file_name))
 
