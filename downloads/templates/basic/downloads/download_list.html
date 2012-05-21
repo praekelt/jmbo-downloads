@@ -13,7 +13,7 @@
                                 <div class="h3 item">{{ obj.primary_category.title }}</div>
                             {% endif %}
                         {% endifchanged %}
-                        <div class="item item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
+                        <div class="{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
                             {% render_object obj "list_item" %}
                         </div>
                     {% endfor %}
