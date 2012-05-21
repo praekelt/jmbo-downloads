@@ -10,6 +10,6 @@ from downloads.models import TEMP_ROOT
 tmp_abs_path = os.path.join(settings.MEDIA_ROOT, TEMP_ROOT)
 while not os.path.exists(tmp_abs_path):
     try:
-        os.makedir(tmp_abs_path)
-    except:
+        os.mkdir(tmp_abs_path, 644)
+    except OSError:
         pass
