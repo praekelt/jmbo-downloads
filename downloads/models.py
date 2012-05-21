@@ -5,9 +5,9 @@ from django.db import models
 from django.conf import settings
 from django.core.files import File
 
-import Image
-import ImageFont
-import ImageDraw
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 
 from jmbo.models import ModelBase
 
