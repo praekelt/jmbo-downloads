@@ -64,7 +64,7 @@ class ImageMod(Download):
             return str(uuid.uuid4()) + '.jpg'
 
     # override this in subclasses and save resulting image in tmp
-    def create_modified_image(self, file_path):
+    def create_modified_image(self, file_path, request):
         pass
 
     def get_file(self, request):
@@ -77,7 +77,7 @@ class ImageMod(Download):
             f.close()
         # if not, create the file
         except IOError:
-            self.create_modified_image(file_path)
+            self.create_modified_image(file_path, request)
         # not saved to db since the files are temporary
         self.file.name = os.path.join(TEMP_ROOT, file_name)
 
@@ -110,7 +110,7 @@ class TextOverlayImageMod(ImageMod):
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
 
-    def create_modified_image(self, file_path):
+    def create_modified_image(self, file_path, request):
         image = self._image.copy()
         draw = ImageDraw.Draw(image)
         # draw text with line breaking
