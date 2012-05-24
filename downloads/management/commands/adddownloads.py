@@ -25,6 +25,7 @@ class Command(BaseCommand):
             action='store',
             type='string',
             dest='category',
+            default=None,
             help='Primary category for the downloads'),
         make_option('-r',
             action='store_true',
@@ -62,6 +63,7 @@ class Command(BaseCommand):
                     self.stdout.write('Adding ' + root + '/' + name + '\n')
                     download = Download(title=name,
                         primary_category=category, state=state)
+                    download.save()
                     for site in sites:
                         download.sites.add(site)
                     f = open(os.path.join(root, name))
