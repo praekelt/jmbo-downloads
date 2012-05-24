@@ -37,13 +37,14 @@ def download_request(request, slug):
 
 class ObjectList(GenericObjectList):
 
-        def get_extra_context(self, *args, **kwargs):
-                return {'title': _('Downloads')}
+    def get_extra_context(self, *args, **kwargs):
+        return {'title': _('Downloads')}
 
-        def get_queryset(self, *args, **kwargs):
-                return Download.permitted.all()
+    def get_queryset(self, *args, **kwargs):
+        
+        return Download.permitted.all()
 
-        def get_paginate_by(self, *args, **kwargs):
-                return 20
+    def get_paginate_by(self, *args, **kwargs):
+        return 20
 
 object_list = ObjectList()
