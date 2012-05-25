@@ -7,7 +7,7 @@
         
                 <div class="title">{% trans title %}</div>
                 <div class="items">
-                    {% for obj in object_list %}
+                    {% for obj in sorted_list %}
                         {% ifchanged obj.primary_category %}
                             {% if obj.primary_category %}
                                 <div class="h3 item-nothumb">{{ obj.primary_category.title }}</div>
