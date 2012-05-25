@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 
 from jmbo.generic.views import GenericObjectList
 
+from category.models import Category
+
 from downloads.models import Download
 
 
@@ -35,42 +37,40 @@ def download_request(request, slug):
     return response
 
 
-# traverse up to parent and create full category name, i.e. ParentChildChild
-def get_full_category(category, full_name, depth):
-    if not category:
-        return (full_name, depth)
-    else:
-        return get_full_category(category.parent, category.title + full_name, depth + 1)
+# traverse up to parent and create absolute category name, i.e. ParentChildChild
+def get_full_category(category_id, parent_id, cat_dict):
+    if parent_id is not None: # has parent
+        li = cat_dict[category_id]
+        li[2] = cat_dict[parent_id][1] + li[2]
+        li[3] += 1
+        get_full_category(category_id, cat_dict[parent_id][0], cat_dict)
 
 
 class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
-        dls = Download.permitted.filter(do_not_list=False)
-        # re-order hierarchically
-        sort_list = []
-        index = 0
-        cat = None
-        full_cat = ('',0)
-        for dl in dls:
-            if dl.primary_category != cat:
-                cat = dl.primary_category
-                full_cat = get_full_category(cat, '', 0)
-            sort_list.append((full_cat[0], index, full_cat[1]))
-            index += 1
-        # perform insertion sort on full category name
-        for i in range(1, len(sort_list)):
-            val = sort_list[i]
+        dls = list(Download.permitted.filter(do_not_list=False))
+        
+        # calculate all absolute category names
+        cat_dict = dict((id, [parent, title, title, 1]) for (id, parent, title) 
+                in Category.objects.values_list('id', 'parent', 'title'))
+        for key in cat_dict.keys():
+            get_full_category(key, cat_dict[key][0], cat_dict)
+        # add None key for downloads without a category
+        cat_dict[None] = (None, '', '', 0)
+
+        # perform insertion sort on absolute category name
+        for i in range(1, len(dls)):
+            val = dls[i]
             j = i - 1
-            while j >= 0 and sort_list[j][0] > val[0]:
-                sort_list[j + 1] = sort_list[j]
+            while j >= 0 and cat_dict[dls[j].primary_category_id][2] > cat_dict[val.primary_category_id][2]:
+                dls[j + 1] = dls[j]
                 j -= 1
-            sort_list[j + 1] = val
-        # construct sorted list [(object, depth), ...]
-        sorted_dls = []
-        for tup in sort_list:
-            sorted_dls.append((dls[tup[1]], tup[2]))
-        return {'title': _('Downloads'), 'sorted_list':sorted_dls}
+            dls[j + 1] = val
+            
+        # construct [(dl_object, depth), ...]
+        sorted_list = [(val, cat_dict[val.primary_category_id][3]) for val in dls]
+        return {'title': _('Downloads'), 'sorted_list':sorted_list}
     
     def get_queryset(self, *args, **kwargs):
         return Download.permitted.none()
