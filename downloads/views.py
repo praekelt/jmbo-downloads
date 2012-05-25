@@ -46,7 +46,7 @@ def get_full_category(category, full_name, depth):
 class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
-        dls = Download.permitted.all()
+        dls = Download.permitted.filter(do_not_list=False)
         # re-order hierarchically
         sort_list = []
         index = 0

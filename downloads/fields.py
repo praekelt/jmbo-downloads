@@ -4,6 +4,8 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext as _
 
+from south.modelsinspector import add_introspection_rules
+
 
 class ColourField(models.CharField):
 
@@ -16,3 +18,6 @@ class ColourField(models.CharField):
         kwargs['validators'] = [RegexValidator(r'^#[\da-f]{6}$',
             _(u'Enter a hexadecimal-format colour.'), 'Invalid')]
         return super(ColourField, self).formfield(*args, **kwargs)
+
+
+add_introspection_rules([], ["^downloads\.fields\.ColourField"])
