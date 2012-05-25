@@ -35,11 +35,12 @@ def download_request(request, slug):
     return response
 
 
-def get_full_category(category, full_name):
+# traverse up to parent and create full category name, i.e. ParentChildChild
+def get_full_category(category, full_name, depth):
     if not category:
-        return full_name
+        return (full_name, depth)
     else:
-        return get_full_category(category.parent, category.title + full_name)
+        return get_full_category(category.parent, category.title + full_name, depth + 1)
 
 
 class ObjectList(GenericObjectList):
@@ -50,12 +51,12 @@ class ObjectList(GenericObjectList):
         sort_list = []
         index = 0
         cat = None
-        full_cat = ''
+        full_cat = ('',0)
         for dl in dls:
             if dl.primary_category != cat:
                 cat = dl.primary_category
-                full_cat = get_full_category(cat, '')
-            sort_list.append((full_cat, index))
+                full_cat = get_full_category(cat, '', 0)
+            sort_list.append((full_cat[0], index, full_cat[1]))
             index += 1
         # perform insertion sort on full category name
         for i in range(1, len(sort_list)):
@@ -65,9 +66,10 @@ class ObjectList(GenericObjectList):
                 sort_list[j + 1] = sort_list[j]
                 j -= 1
             sort_list[j + 1] = val
+        # construct sorted list [(object, depth), ...]
         sorted_dls = []
         for tup in sort_list:
-            sorted_dls.append(dls[tup[1]])
+            sorted_dls.append((dls[tup[1]], tup[2]))
         return {'title': _('Downloads'), 'sorted_list':sorted_dls}
     
     def get_queryset(self, *args, **kwargs):
