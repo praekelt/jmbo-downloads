@@ -7,13 +7,13 @@
         
                 <div class="title">{% trans title %}</div>
                 <div class="items">
-                    {% for obj in object_list %}
+                    {% for obj, depth in sorted_list %}
                         {% ifchanged obj.primary_category %}
                             {% if obj.primary_category %}
-                                <div class="h3 item-nothumb">{{ obj.primary_category.title }}</div>
+                                <div class="h3 item-nothumb category-{{ obj.primary_category.slug }} category-level-{{ depth }}">{{ obj.primary_category.title }}</div>
                             {% endif %}
                         {% endifchanged %}
-                        <div class="{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
+                        <div class="{% if obj.primary_category %}category-{{ obj.primary_category.slug }} {% endif %}{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
                             {% render_object obj "list_item" %}
                         </div>
                     {% endfor %}

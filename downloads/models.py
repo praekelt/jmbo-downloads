@@ -34,7 +34,9 @@ class Download(ModelBase):
         null=True,
         blank=True
     )
-
+    # don't show this download in listings
+    do_not_list = models.BooleanField(default=False)
+    
     class Meta:
         ordering = ['primary_category', 'title']
 
