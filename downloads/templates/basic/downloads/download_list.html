@@ -13,9 +13,11 @@
                                 <div class="h3 item-nothumb category-{{ obj.primary_category.slug }} category-level-{{ depth }}">{{ obj.primary_category.title }}</div>
                             {% endif %}
                         {% endifchanged %}
-                        <div class="{% if obj.primary_category %}category-{{ obj.primary_category.slug }} {% endif %}{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
-                            {% render_object obj "list_item" %}
-                        </div>
+                        {% if not obj.do_not_list %}
+                            <div class="{% if obj.primary_category %}category-{{ obj.primary_category.slug }} {% endif %}{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
+                                {% render_object obj "list_item" %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
         
