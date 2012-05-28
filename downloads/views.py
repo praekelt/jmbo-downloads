@@ -37,9 +37,9 @@ def download_request(request, slug):
     return response
 
 
-# traverse up to parent and create absolute category name, i.e. ParentChildChild
+# traverse up to parent and create absolute category name
 def get_full_category(category_id, parent_id, cat_dict):
-    if parent_id is not None: # has parent
+    if parent_id is not None:  # has parent
         li = cat_dict[category_id]
         li[2] = cat_dict[parent_id][1] + li[2]
         li[3] += 1
@@ -50,9 +50,9 @@ class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
         dls = list(Download.permitted.filter(do_not_list=False))
-        
+
         # calculate all absolute category names
-        cat_dict = dict((id, [parent, title, title, 1]) for (id, parent, title) 
+        cat_dict = dict((id, [parent, title, title, 1]) for (id, parent, title)
                 in Category.objects.values_list('id', 'parent', 'title'))
         for key in cat_dict.keys():
             get_full_category(key, cat_dict[key][0], cat_dict)
@@ -67,11 +67,12 @@ class ObjectList(GenericObjectList):
                 dls[j + 1] = dls[j]
                 j -= 1
             dls[j + 1] = val
-            
+
         # construct [(dl_object, depth), ...]
-        sorted_list = [(val, cat_dict[val.primary_category_id][3]) for val in dls]
-        return {'title': _('Downloads'), 'sorted_list':sorted_list}
-    
+        sorted_list = [(val,
+            cat_dict[val.primary_category_id][3]) for val in dls]
+        return {'title': _('Downloads'), 'sorted_list': sorted_list}
+
     def get_queryset(self, *args, **kwargs):
         return Download.permitted.none()
 

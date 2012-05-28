@@ -43,9 +43,9 @@ class DownloadsTestCase(TestCase):
             reverse('download-request', kwargs={'slug': dl.slug})
         )
         self.assertEqual(response.status_code, 200)
-        
+
     def test_header_is_being_set(self):
-        '''Nginx-specific header must be set for the server to serve the file'''
+        '''Nginx header must be set for the server to serve the file'''
         dl = self.make_download()
         slug = dl.slug
         response = self.client.get(
@@ -62,7 +62,7 @@ class DownloadsTestCase(TestCase):
         self.assertNotEqual(dl1.file.path, dl2.file.path)
 
     def test_files_are_removed(self):
-        '''Create and remove a download, and check the uploaded file is deleted'''
+        '''Check that uploaded file is deleted when object is removed'''
         dl = self.make_download()
         dl.delete()
         self.assertEqual(os.path.exists(dl.file.path), False)

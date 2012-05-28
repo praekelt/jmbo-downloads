@@ -36,7 +36,7 @@ class Download(ModelBase):
     )
     # don't show this download in listings
     do_not_list = models.BooleanField(default=False)
-    
+
     class Meta:
         ordering = ['primary_category', 'title']
 
@@ -49,7 +49,7 @@ class Download(ModelBase):
             return (self.file, self.file_name)
         else:
             return (self.file, os.path.basename(self.file.name))
-    
+
     def delete(self):
         if os.path.exists(self.file.path):
             os.remove(self.file.path)
