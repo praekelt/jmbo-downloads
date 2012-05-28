@@ -61,3 +61,8 @@ class DownloadsTestCase(TestCase):
         dl2 = self.make_download()
         self.assertNotEqual(dl1.file.path, dl2.file.path)
 
+    def test_files_are_removed(self):
+        '''Create and remove a download, and check the uploaded file is deleted'''
+        dl = self.make_download()
+        dl.delete()
+        self.assertEqual(os.path.exists(dl.file.path), False)
