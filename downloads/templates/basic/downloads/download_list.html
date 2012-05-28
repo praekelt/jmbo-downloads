@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags %} 
+
+{% block content %}
+    <div class="content download-list">
+            <div class="foundry-container foundry-listing-vertical-thumbnail">
+        
+                <div class="title">{% trans title %}</div>
+                <div class="items">
+                    {% for obj, depth in sorted_list %}
+                        {% ifchanged obj.primary_category %}
+                            {% if obj.primary_category %}
+                                <div class="h3 item-nothumb category-{{ obj.primary_category.slug }} category-level-{{ depth }}">{{ obj.primary_category.title }}</div>
+                            {% endif %}
+                        {% endifchanged %}
+                        <div class="{% if obj.primary_category %}category-{{ obj.primary_category.slug }} {% endif %}{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
+                            {% render_object obj "list_item" %}
+                        </div>
+                    {% endfor %}
+                </div>
+        
+                {% pager page_obj %}
+            </div>
+    </div>
+{% endblock %}

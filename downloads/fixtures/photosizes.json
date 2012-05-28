@@ -1,0 +1,17 @@
+[
+    {
+        "pk": null, 
+        "model": "photologue.photosize",
+        "fields": {
+            "name": "download_list", 
+            "watermark": null, 
+            "increment_count": false, 
+            "effect": null, 
+            "crop": true, 
+            "height": 60, "width": 60, 
+            "upscale": true, 
+            "pre_cache": false, 
+            "quality": 70
+        }
+    }
+]
