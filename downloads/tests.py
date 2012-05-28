@@ -36,18 +36,21 @@ class DownloadsTestCase(TestCase):
         return dl
 
     def test_authentication_required(self):
+        '''Downloads should be accessible without authentication by default'''
         self.client.logout()
         dl = self.make_download()
-        file_name = dl.file.name.split('/', 1)[1]
         response = self.client.get(
-            reverse('download_request', kwargs={'file_name': file_name})
+            reverse('download-request', kwargs={'slug': dl.slug})
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         
     def test_header_is_being_set(self):
+        '''Nginx-specific header must be set for the server to serve the file'''
         dl = self.make_download()
         slug = dl.slug
-        response = self.client.get(reverse('download-request', args=(slug,)))
+        response = self.client.get(
+            reverse('download-request', kwargs={'slug': dl.slug})
+        )
         self.assertEqual(response['X-Accel-Redirect'],
             '%sdownloads/%s' % (settings.MEDIA_URL,
             os.path.basename(dl.file.name)))
