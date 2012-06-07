@@ -1,21 +1,18 @@
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib.auth.decorators import login_required
+from django.conf.urls.defaults import patterns, url
 
-from downloads.views import object_list
+from downloads.views import object_list, download_request
 
 
 urlpatterns = patterns('',
-
     # download url
     url(
         r'^$',
-        login_required(object_list),
-        {},
+        object_list,
         name='downloads'
     ),
     url(
-	r'^(?P<file_name>[\w\.-]+)/$', 
-	'downloads.views.download_request',
-        {},
+        r'^(?P<slug>[\w-]+)/$',
+        download_request,
+        name='download-request'
     ),
 )
