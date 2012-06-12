@@ -80,5 +80,8 @@ class ObjectList(GenericObjectList):
 
     def get_paginate_by(self, *args, **kwargs):
         return 20
+ 
+    def get_template_name(self, *args, **kwargs):
+        return "downloads/download_list_category.html"
 
 object_list = ObjectList()
