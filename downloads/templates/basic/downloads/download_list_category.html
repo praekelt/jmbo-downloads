@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags %} 
+{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags downloads_tags %} 
 
 {% block content %}
     <div class="content download-list">
@@ -7,15 +7,8 @@
         
                 <div class="title">{% trans title %}</div>
                 <div class="items">
-                    {% for obj, depth in sorted_list %}
-                        {% ifchanged obj.primary_category %}
-                            {% if obj.primary_category %}
-                                <div class="category category-{{ obj.primary_category.slug }} category-level-{{ depth }}">{{ obj.primary_category.title }}</div>
-                            {% endif %}
-                        {% endifchanged %}
-                        <div class="{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
-                            {% render_object obj "list_item" %}
-                        </div>
+                    {% for category_dict in category_list %}
+                        {% render_category category_dict forloop.first forloop.last %}
                     {% endfor %}
                 </div>
         
