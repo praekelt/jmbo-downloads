@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load jmbo_inclusion_tags downloads_tags %} 
+
+{% block content %}
+    <div class="content download-list">
+            <div class="foundry-container foundry-listing-vertical-thumbnail">
+        
+                <div class="title">{{ title }}</div>
+                <div class="items">
+                    {% for category_dict in category_list %}
+                        {% render_category category_dict forloop.first forloop.last %}
+                    {% endfor %}
+                </div>
+        
+                {% pager page_obj %}
+            </div>
+    </div>
+{% endblock %}

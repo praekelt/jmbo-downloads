@@ -5,6 +5,7 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
+from django.utils.datastructures import SortedDict
 
 from jmbo.generic.views import GenericObjectList
 
@@ -39,46 +40,55 @@ def download_request(request, slug):
     return response
 
 
-# traverse up to parent and create absolute category name
-def get_full_category(category_id, parent_id, cat_dict):
-    if parent_id is not None:  # has parent
-        li = cat_dict[category_id]
-        li[2] = cat_dict[parent_id][1] + li[2]
-        li[3] += 1
-        get_full_category(category_id, cat_dict[parent_id][0], cat_dict)
-
-
 class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
         dls = list(Download.permitted.filter(do_not_list=False))
 
-        # calculate all absolute category names
-        cat_dict = dict((id, [parent, title, title, 1]) for (id, parent, title)
-                in Category.objects.values_list('id', 'parent', 'title'))
-        for key in cat_dict.keys():
-            get_full_category(key, cat_dict[key][0], cat_dict)
+        # create dictionary of categories
+        cat_dict = SortedDict((id, {'parent': parent, 'title': title, 'items': [],
+                              'subcats': [], 'slug': slug, 'child_count': 0})
+                for (id, parent, title, slug)
+                in Category.objects.values_list('id', 'parent', 'title', 'slug'))
         # add None key for downloads without a category
-        cat_dict[None] = (None, '', '', 0)
+        cat_dict[None] = {'parent': None, 'items': [], 'child_count': 0, 'subcats': []}
+        
+        # add downloads to category item lists
+        for dl in dls:
+            cat_dict[dl.primary_category_id]['items'].append(dl)
 
-        # perform insertion sort on absolute category name
-        for i in range(1, len(dls)):
-            val = dls[i]
-            j = i - 1
-            while j >= 0 and cat_dict[dls[j].primary_category_id][2] > cat_dict[val.primary_category_id][2]:
-                dls[j + 1] = dls[j]
-                j -= 1
-            dls[j + 1] = val
-
-        # construct [(dl_object, depth), ...]
-        sorted_list = [(val,
-            cat_dict[val.primary_category_id][3]) for val in dls]
-        return {'title': _('Downloads'), 'sorted_list': sorted_list}
+        # nest subcategories
+        for key, val in cat_dict.items():
+            if val['parent']:
+                cat_dict[val['parent']]['subcats'].append(key)
+            child_count = len(val['items'])
+            val['child_count'] += child_count
+            if child_count > 0:
+                parent_id = val['parent']
+                while parent_id:
+                    cat_dict[parent_id]['child_count'] += child_count
+                    parent_id = cat_dict[parent_id]['parent']              
+        
+        # remove categories with no items in them
+        category_list = []
+        for key, val in cat_dict.items():
+            subcats = []
+            for subcat in val['subcats']:
+                if cat_dict[subcat]['child_count'] > 0:
+                    subcats.append(cat_dict[subcat])
+            val['subcats'] = subcats
+            if val['child_count'] > 0 and not val['parent']:
+                category_list.append(val)       
+        
+        return {'title': _('Downloads'), 'category_list': category_list}
 
     def get_queryset(self, *args, **kwargs):
         return Download.permitted.none()
 
     def get_paginate_by(self, *args, **kwargs):
         return 20
+ 
+    def get_template_name(self, *args, **kwargs):
+        return "downloads/download_list_category.html"
 
 object_list = ObjectList()

@@ -4,6 +4,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.core.files import File
+from django.core.urlresolvers import reverse
 
 from PIL import Image
 from PIL import ImageFont
@@ -52,7 +53,7 @@ class Download(ModelBase):
         ordering = ['primary_category', 'title']
 
     def get_absolute_url(self):
-        return '/downloads/' + self.slug # use reverse
+        return reverse('download-request', args=[self.slug])
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
