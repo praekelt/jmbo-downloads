@@ -68,19 +68,19 @@ class Download(ModelBase):
         super(Download, self).delete()
 
 
-# abstract base class for image mods
-class ImageMod(Download):
+# abstract base class for temporary downloads
+class TemporaryDownloadAbstract(Download):
     unique_per_user = models.BooleanField(default=False) #editable=False
 
     class Meta:
         abstract = True
 
-    def make_file_name(self, request):
-        # will take out hardcoding of file type later, if necessary
+    def make_file_name(self, request, extension=''):
         if self.unique_per_user:
-            return str(uuid.UUID(int=request.user.id)) + '.jpg'
+            id = str(uuid.UUID(int=request.user.id))
         else:
-            return str(uuid.uuid4()) + '.jpg'
+            id = return str(uuid.uuid4())
+        return "%s_%s.%s" % (self.slug, id, extension)
 
     # override this in subclasses and save resulting image in tmp
     def create_modified_image(self, file_path, request):
@@ -100,10 +100,10 @@ class ImageMod(Download):
         # not saved to db since the files are temporary
         self.file.name = os.path.join(TEMP_ROOT, file_name)
 
-        return super(ImageMod, self).get_file(request)
+        return super(TemporaryDownloadAbstract, self).get_file(request)
 
 
-class TextOverlayImageMod(ImageMod):
+class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
     background_image = models.ImageField(upload_to=MOD_MEDIA_ROOT)
     text = models.TextField()
     x = models.PositiveIntegerField()
@@ -117,8 +117,11 @@ class TextOverlayImageMod(ImageMod):
     font_size = models.PositiveIntegerField()
     colour = ColourField()
 
+    def make_file_name(self, request):
+        return super(TextOverlayTemporaryDownload, self).make_file_name(request, 'jpg')
+        
     def save(self, *args, **kwargs):
-        super(TextOverlayImageMod, self).save(*args, **kwargs)
+        super(TextOverlayTemporaryDownload, self).save(*args, **kwargs)
         self._image = Image.open(os.path.join(settings.MEDIA_ROOT,
             self.background_image.name))
         self._box = (self.x, self.y, self.width, self.height)
