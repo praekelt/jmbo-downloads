@@ -43,7 +43,7 @@ def download_request(request, slug):
 class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
-        dls = list(Download.permitted.filter(do_not_list=False))
+        dls = list(Download.permitted.all())
 
         # create dictionary of categories
         cat_dict = SortedDict((id, {'parent': parent, 'title': title, 'items': [],

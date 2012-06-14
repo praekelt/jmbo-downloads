@@ -79,7 +79,7 @@ class TemporaryDownloadAbstract(Download):
         if self.unique_per_user:
             id = str(uuid.UUID(int=request.user.id))
         else:
-            id = return str(uuid.uuid4())
+            id = str(uuid.uuid4())
         return "%s_%s.%s" % (self.slug, id, extension)
 
     # override this in subclasses and save resulting image in tmp
