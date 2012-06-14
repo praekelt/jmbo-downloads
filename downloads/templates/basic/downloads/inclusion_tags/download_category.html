@@ -1,0 +1,13 @@
+{% load i18n jmbo_inclusion_tags downloads_tags %}
+
+<div class="{% if category.slug %}category category-{{ category.slug }}{% else %}no-category{% endif %}{% if first %} first{% endif %}{% if last %} last{% endif %}">
+    <div class="title">{{ category.title }}</div>
+    {% for obj in category.items %}
+        <div class="{% if obj.image %}item{% else %}item-nothumb{% endif %} item-download{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
+            {% render_object obj "list_item" %}
+        </div>
+    {% endfor %}
+    {% for subcat in category.subcats %}
+        {% render_category subcat %}
+    {% endfor %}
+</div>
