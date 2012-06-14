@@ -10,6 +10,7 @@ from PIL import ImageFont
 from PIL import ImageDraw
 
 from jmbo.models import ModelBase
+from jmbo.managers import PermittedManager
 
 from downloads.fields import ColourField
 
@@ -20,6 +21,16 @@ DOWNLOAD_ROOT = 'downloads/'
 MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods/')
 # where temporary downloadable files are kept
 TEMP_ROOT = os.path.join(DOWNLOAD_ROOT, 'tmp/')
+
+
+# manager that excludes invisible downloads by default
+class DownloadManager(PermittedManager):
+
+    def get_query_set(self, include_invisible=False):
+        qs = super(DownloadManager, self).get_query_set()
+        if not include_invisible:
+            qs = qs.exclude(visible=False)
+        return qs
 
 
 class Download(ModelBase):
@@ -34,14 +45,14 @@ class Download(ModelBase):
         null=True,
         blank=True
     )
-    # don't show this download in listings
-    do_not_list = models.BooleanField(default=False)
+    visible = models.BooleanField(default=True)
+    permitted = DownloadManager()
 
     class Meta:
         ordering = ['primary_category', 'title']
 
     def get_absolute_url(self):
-        return '/downloads/' + self.slug
+        return '/downloads/' + self.slug # use reverse
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
@@ -58,9 +69,9 @@ class Download(ModelBase):
 
 # abstract base class for image mods
 class ImageMod(Download):
-    unique_per_user = models.BooleanField(default=False)
+    unique_per_user = models.BooleanField(default=False) #editable=False
 
-    class Meta(Download.Meta):
+    class Meta:
         abstract = True
 
     def make_file_name(self, request):
@@ -72,7 +83,7 @@ class ImageMod(Download):
 
     # override this in subclasses and save resulting image in tmp
     def create_modified_image(self, file_path, request):
-        pass
+        pass # ad not implemented exception
 
     def get_file(self, request):
         file_name = self.make_file_name(request)
