@@ -15,7 +15,8 @@ from downloads.models import Download
 
 
 def download_request(request, slug):
-    download = Download.permitted.get(slug=slug).as_leaf_class()
+    # explicitly pass True to get_query_set to include invisible downloads
+    download = Download.permitted.get_query_set(True).get(slug=slug).as_leaf_class()
 
     # increment view count
     # contains race condition: download.view_count += 1

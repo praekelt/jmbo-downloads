@@ -10,10 +10,10 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-from jmbo.models import ModelBase
-from jmbo.managers import PermittedManager
+from jmbo.models import ModelBase, set_managers
 
 from downloads.fields import ColourField
+from downloads.managers import VisibleManager
 
 
 # root of all downloadable files
@@ -22,16 +22,6 @@ DOWNLOAD_ROOT = 'downloads/'
 MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods/')
 # where temporary downloadable files are kept
 TEMP_ROOT = os.path.join(DOWNLOAD_ROOT, 'tmp/')
-
-
-# manager that excludes invisible downloads by default
-class DownloadManager(PermittedManager):
-
-    def get_query_set(self, include_invisible=False):
-        qs = super(DownloadManager, self).get_query_set()
-        if not include_invisible:
-            qs = qs.exclude(visible=False)
-        return qs
 
 
 class Download(ModelBase):
@@ -47,7 +37,6 @@ class Download(ModelBase):
         blank=True
     )
     visible = models.BooleanField(default=True)
-    permitted = DownloadManager()
 
     class Meta:
         ordering = ['primary_category', 'title']
@@ -150,3 +139,12 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         self.draw_text(draw, (self._box[0], self._box[1] + height), line[0:-1])
         del draw
         image.save(file_path)
+
+
+# replace Jmbo's permitted manager
+def set_download_manager(cls):
+    cls.add_to_class('permitted', VisibleManager())
+    for c in cls.__subclasses__():
+        set_download_manager(c)
+
+set_download_manager(Download)
