@@ -1,4 +1,4 @@
-{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags downloads_tags %}
+{% load i18n jmbo_inclusion_tags downloads_tags %}
 
 <div class="{% if category.slug %}category category-{{ category.slug }}{% else %}no-category{% endif %}{% if first %} first{% endif %}{% if last %} last{% endif %}">
     <div class="title">{{ category.title }}</div>

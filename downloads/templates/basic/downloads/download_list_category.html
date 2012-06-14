@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load i18n jmbo_inclusion_tags jmbo_template_tags foundry_tags downloads_tags %} 
+{% load jmbo_inclusion_tags downloads_tags %} 
 
 {% block content %}
     <div class="content download-list">
             <div class="foundry-container foundry-listing-vertical-thumbnail">
         
-                <div class="title">{% trans title %}</div>
+                <div class="title">{{ title }}</div>
                 <div class="items">
                     {% for category_dict in category_list %}
                         {% render_category category_dict forloop.first forloop.last %}
