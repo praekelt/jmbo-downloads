@@ -6,3 +6,4 @@ recursive-include downloads/fixtures *
 recursive-include downloads/management *
 recursive-include downloads/migrations *
 recursive-include downloads/templates *
+recursive-include downloads/templatetags *
