@@ -1,17 +1,19 @@
+import os.path
+
 from mimetypes import guess_type
 
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
-from django.contrib.auth.decorators import login_required
 from django.db.models import F
+from django.conf import settings
 from django.utils.datastructures import SortedDict
 
 from jmbo.generic.views import GenericObjectList
 
 from category.models import Category
 
-from downloads.models import Download
+from downloads.models import Download, DOWNLOAD_FOLDER
 from downloads.signals import download_requested
 
 
@@ -44,7 +46,8 @@ def download_request(request, slug):
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Expires'] = '0'
     response['Pragma'] = 'no-store, no-cache'
-    response['X-Accel-Redirect'] = smart_str(f.url)
+    response['X-Accel-Redirect'] = smart_str(os.path.join(settings.MEDIA_URL,
+        DOWNLOAD_FOLDER, file_name))
 
     return response
 
