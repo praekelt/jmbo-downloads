@@ -41,8 +41,9 @@ class Download(ModelBase):
     class Meta:
         ordering = ['primary_category', 'title']
 
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('download-request', args=[self.slug])
+        return ('downloads.views.download_request', (self.slug,))
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
