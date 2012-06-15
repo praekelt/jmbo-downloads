@@ -12,6 +12,7 @@ from jmbo.generic.views import GenericObjectList
 from category.models import Category
 
 from downloads.models import Download
+from downloads.signals import download_requested
 
 
 def download_request(request, slug):
@@ -23,6 +24,12 @@ def download_request(request, slug):
     # contains race condition: download.view_count += 1
     download.view_count = F('view_count') + 1
     download.save()
+    
+    # send signal for other apps to track the download
+    download_requested.send(
+        sender=download,
+        request=request
+    ) 
 
     f, file_name = download.get_file(request)
 
