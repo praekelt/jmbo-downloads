@@ -59,7 +59,8 @@ class Download(ModelBase):
 
 # abstract base class for temporary downloads
 class TemporaryDownloadAbstract(Download):
-    unique_per_user = models.BooleanField(default=False) #editable=False
+    # the subclass should set this to true if applicable
+    unique_per_user = models.BooleanField(default=False, editable=False)
 
     class Meta:
         abstract = True
@@ -71,9 +72,9 @@ class TemporaryDownloadAbstract(Download):
             id = str(uuid.uuid4())
         return "%s_%s.%s" % (self.slug, id, extension)
 
-    # override this in subclasses and save resulting image in tmp
-    def create_modified_image(self, file_path, request):
-        pass # ad not implemented exception
+    # override this in subclasses and save resulting files in tmp
+    def create_file(self, file_path, request):
+        raise NotImplementedError
 
     def get_file(self, request):
         file_name = self.make_file_name(request)
@@ -85,7 +86,7 @@ class TemporaryDownloadAbstract(Download):
             f.close()
         # if not, create the file
         except IOError:
-            self.create_modified_image(file_path, request)
+            self.create_file(file_path, request)
         # not saved to db since the files are temporary
         self.file.name = os.path.join(TEMP_ROOT, file_name)
 
@@ -108,35 +109,31 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
 
     def make_file_name(self, request):
         return super(TextOverlayTemporaryDownload, self).make_file_name(request, 'jpg')
-        
-    def save(self, *args, **kwargs):
-        super(TextOverlayTemporaryDownload, self).save(*args, **kwargs)
-        self._image = Image.open(os.path.join(settings.MEDIA_ROOT,
-            self.background_image.name))
-        self._box = (self.x, self.y, self.width, self.height)
-        self._font = ImageFont.truetype(self.font, self.font_size)
-        self._line_height = int(self.font_size * 0.85)
-        self._colour = str(self.colour)
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
 
-    def create_modified_image(self, file_path, request):
-        image = self._image.copy()
+    def create_file(self, file_path, request):
+        self._font = ImageFont.truetype(self.font, self.font_size)
+        self._colour = str(self.colour)
+        box = (self.x, self.y, self.width, self.height)
+        line_height = int(self.font_size * 0.85)
+        image = Image.open(os.path.join(settings.MEDIA_ROOT,
+            self.background_image.name)).copy()
         draw = ImageDraw.Draw(image)
         # draw text with line breaking
         height = 0
         line = ''
         for word in self.text.split(' '):
             size = draw.textsize(line + word, font=self._font)
-            if size[0] > self._box[2]:
+            if size[0] > box[2]:
                 self.draw_text(draw,
-                    (self._box[0], self._box[1] + height), line[0:-1])
+                    (box[0], box[1] + height), line[0:-1])
                 line = word + ' '
-                height += self._line_height
+                height += line_height
             else:
                 line += word + ' '
-        self.draw_text(draw, (self._box[0], self._box[1] + height), line[0:-1])
+        self.draw_text(draw, (box[0], box[1] + height), line[0:-1])
         del draw
         image.save(file_path)
 
