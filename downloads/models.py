@@ -15,7 +15,8 @@ from downloads.managers import VisibleManager
 
 
 # root of all downloadable files
-DOWNLOAD_ROOT = os.path.join(settings.MEDIA_ROOT, 'downloads')
+DOWNLOAD_FOLDER = 'downloads'
+DOWNLOAD_ROOT = os.path.join(settings.MEDIA_ROOT, DOWNLOAD_FOLDER)
 # path to media required for image modifications
 MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods')
 # where temporary downloadable files are kept

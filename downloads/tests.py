@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.sites.models import Site
 
-from downloads.models import Download, DOWNLOAD_ROOT
+from downloads.models import Download, DOWNLOAD_FOLDER
 
 
 class DownloadsTestCase(TestCase):
@@ -27,10 +27,9 @@ class DownloadsTestCase(TestCase):
             # Just grab this actual file as a test file
             file_path = os.path.join(settings.PROJECT_ROOT, 'downloads',
                             __file__)
-        dl = Download.objects.create(file=DjangoFile(open(
-                                                file_path), 'test_file.py'),
-                                                title=title,
-                                                state='published')
+        content_file = DjangoFile(open(file_path, 'r'), 'test_file.py')
+        dl = Download.objects.create(file=content_file, title=title,
+                                        image=content_file, state='published')
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
@@ -51,7 +50,8 @@ class DownloadsTestCase(TestCase):
             reverse('download-request', kwargs={'slug': dl.slug})
         )
         self.assertEqual(response['X-Accel-Redirect'],
-            os.path.join(DOWNLOAD_ROOT, os.path.basename(dl.file.name)))
+            os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
+                            os.path.basename(dl.file.name)))
 
     def test_duplicate_filenames(self):
         """Two files with the same name are uploaded"""
@@ -63,4 +63,4 @@ class DownloadsTestCase(TestCase):
         '''Check that uploaded file is deleted when object is removed'''
         dl = self.make_download()
         dl.delete()
-        self.assertEqual(os.path.exists(dl.file.path), False)
+        self.assertFalse(os.path.exists(dl.file.path))
