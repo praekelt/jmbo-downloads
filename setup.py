@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jmbo-downloads',
-    version='0.0.2',
+    version='0.0.3',
     description='Downloads for Jmbo.',
     long_description=(open('README.rst', 'r').read() +
                         open('AUTHORS.rst', 'r').read() +

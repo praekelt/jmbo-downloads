@@ -3,7 +3,7 @@ from django.db.models.query import QuerySet
 
 from jmbo.admin import ModelBaseAdmin, ModelBaseAdminForm
 
-from downloads.models import Download, TextOverlayImageMod
+from downloads.models import Download, TextOverlayTemporaryDownload
 
 
 class DownloadAdminForm(ModelBaseAdminForm):
@@ -13,7 +13,7 @@ class DownloadAdminForm(ModelBaseAdminForm):
 
 class TOIMAdminForm(ModelBaseAdminForm):
     class Meta(ModelBaseAdminForm.Meta):
-        model = TextOverlayImageMod
+        model = TextOverlayTemporaryDownload
 
 
 class DownloadAdmin(ModelBaseAdmin):
@@ -65,4 +65,4 @@ class TextOverlayImageModAdmin(ImageModAdmin):
 
 
 admin.site.register(Download, DownloadAdmin)
-admin.site.register(TextOverlayImageMod, TextOverlayImageModAdmin)
+admin.site.register(TextOverlayTemporaryDownload, TextOverlayImageModAdmin)
