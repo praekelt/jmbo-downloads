@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.sites.models import Site
 
-from downloads.models import Download
+from downloads.models import Download, DOWNLOAD_ROOT
 
 
 class DownloadsTestCase(TestCase):
@@ -47,13 +47,11 @@ class DownloadsTestCase(TestCase):
     def test_header_is_being_set(self):
         '''Nginx header must be set for the server to serve the file'''
         dl = self.make_download()
-        slug = dl.slug
         response = self.client.get(
             reverse('download-request', kwargs={'slug': dl.slug})
         )
         self.assertEqual(response['X-Accel-Redirect'],
-            '%sdownloads/%s' % (settings.MEDIA_URL,
-            os.path.basename(dl.file.name)))
+            os.path.join(DOWNLOAD_ROOT, os.path.basename(dl.file.name)))
 
     def test_duplicate_filenames(self):
         """Two files with the same name are uploaded"""
