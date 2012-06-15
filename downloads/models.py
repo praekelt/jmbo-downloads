@@ -3,25 +3,23 @@ import uuid
 
 from django.db import models
 from django.conf import settings
-from django.core.files import File
-from django.core.urlresolvers import reverse
 
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-from jmbo.models import ModelBase, set_managers
+from jmbo.models import ModelBase
 
 from downloads.fields import ColourField
 from downloads.managers import VisibleManager
 
 
 # root of all downloadable files
-DOWNLOAD_ROOT = 'downloads/'
+DOWNLOAD_ROOT = os.path.join(settings.MEDIA_ROOT, 'downloads')
 # path to media required for image modifications
-MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods/')
+MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods')
 # where temporary downloadable files are kept
-TEMP_ROOT = os.path.join(DOWNLOAD_ROOT, 'tmp/')
+TEMP_ROOT = os.path.join(DOWNLOAD_ROOT, 'tmp')
 
 
 class Download(ModelBase):
@@ -41,8 +39,9 @@ class Download(ModelBase):
     class Meta:
         ordering = ['primary_category', 'title']
 
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('download-request', args=[self.slug])
+        return ('downloads.views.download_request', (self.slug,))
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
