@@ -15,7 +15,9 @@ from downloads.models import Download
 
 
 def download_request(request, slug):
-    download = Download.permitted.get(slug=slug).as_leaf_class()
+    # explicitly pass True to get_query_set to include invisible downloads
+    download = Download.permitted.get_query_set(True).get(slug=slug)
+    download = download.as_leaf_class()
 
     # increment view count
     # contains race condition: download.view_count += 1
@@ -43,16 +45,18 @@ def download_request(request, slug):
 class ObjectList(GenericObjectList):
 
     def get_extra_context(self, *args, **kwargs):
-        dls = list(Download.permitted.filter(do_not_list=False))
+        dls = list(Download.permitted.all())
 
         # create dictionary of categories
-        cat_dict = SortedDict((id, {'parent': parent, 'title': title, 'items': [],
-                              'subcats': [], 'slug': slug, 'child_count': 0})
+        cat_dict = SortedDict((id, {'parent': parent, 'title': title,
+            'items': [], 'subcats': [], 'slug': slug, 'child_count': 0})
                 for (id, parent, title, slug)
-                in Category.objects.values_list('id', 'parent', 'title', 'slug'))
+                in Category.objects.values_list('id', 'parent',
+                    'title', 'slug'))
         # add None key for downloads without a category
-        cat_dict[None] = {'parent': None, 'items': [], 'child_count': 0, 'subcats': []}
-        
+        cat_dict[None] = {'parent': None, 'items': [],
+            'child_count': 0, 'subcats': []}
+
         # add downloads to category item lists
         for dl in dls:
             cat_dict[dl.primary_category_id]['items'].append(dl)
@@ -67,8 +71,8 @@ class ObjectList(GenericObjectList):
                 parent_id = val['parent']
                 while parent_id:
                     cat_dict[parent_id]['child_count'] += child_count
-                    parent_id = cat_dict[parent_id]['parent']              
-        
+                    parent_id = cat_dict[parent_id]['parent']
+
         # remove categories with no items in them
         category_list = []
         for key, val in cat_dict.items():
@@ -78,8 +82,8 @@ class ObjectList(GenericObjectList):
                     subcats.append(cat_dict[subcat])
             val['subcats'] = subcats
             if val['child_count'] > 0 and not val['parent']:
-                category_list.append(val)       
-        
+                category_list.append(val)
+
         return {'title': _('Downloads'), 'category_list': category_list}
 
     def get_queryset(self, *args, **kwargs):
@@ -87,7 +91,7 @@ class ObjectList(GenericObjectList):
 
     def get_paginate_by(self, *args, **kwargs):
         return 20
- 
+
     def get_template_name(self, *args, **kwargs):
         return "downloads/download_list_category.html"
 
