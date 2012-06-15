@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 
 from downloads.models import Download, DOWNLOAD_FOLDER
+from downloads.signals import download_requested
 
 
 class DownloadsTestCase(TestCase):
@@ -21,6 +22,7 @@ class DownloadsTestCase(TestCase):
         )
         self.client = Client()
         self.client.login(username=self.username, password=self.password)
+        self.signal_received = False
 
     def make_download(self, file_path=None, title='some_title'):
         if file_path is None:
@@ -33,6 +35,9 @@ class DownloadsTestCase(TestCase):
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
+    
+    def receive_signal(self, sender, **kwargs):
+        self.signal_received = True
 
     def test_authentication_required(self):
         '''Downloads should be accessible without authentication by default'''
@@ -64,3 +69,12 @@ class DownloadsTestCase(TestCase):
         dl = self.make_download()
         dl.delete()
         self.assertFalse(os.path.exists(dl.file.path))
+
+    def test_signal_is_sent(self):
+        dl = self.make_download()
+        self.signal_received = False
+        download_requested.connect(self.receive_signal)
+        self.client.get(
+            reverse('download-request', kwargs={'slug': dl.slug})
+        )
+        self.assertTrue(self.signal_received)
