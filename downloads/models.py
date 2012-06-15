@@ -108,7 +108,8 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
     colour = ColourField()
 
     def make_file_name(self, request):
-        return super(TextOverlayTemporaryDownload, self).make_file_name(request, 'jpg')
+        return super(TextOverlayTemporaryDownload,
+            self).make_file_name(request, 'jpg')
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
