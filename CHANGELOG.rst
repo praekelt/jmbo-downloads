@@ -1,3 +1,10 @@
+Changelog
+=========
+
+0.0.4 (2012-06-21)
+------------------
+#. South dependency on jmbo upped to 0002 migration.
+
 0.0.3 (2012-06-15)
 ------------------
 #. Improve templates to better render download categories.
