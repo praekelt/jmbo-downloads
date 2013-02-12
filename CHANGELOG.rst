@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.0.5
+-----
+#. Fix bug where X-Accel-Redirect uses file name override instead of actual file name to serve download, causing a 404 if the file name and override don't match.
+
 0.0.4 (2012-06-21)
 ------------------
 #. South dependency on jmbo upped to 0002 migration.

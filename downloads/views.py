@@ -47,7 +47,7 @@ def download_request(request, slug):
     response['Expires'] = '0'
     response['Pragma'] = 'no-store, no-cache'
     response['X-Accel-Redirect'] = smart_str(os.path.join(settings.MEDIA_URL,
-        DOWNLOAD_FOLDER, file_name))
+        DOWNLOAD_FOLDER, os.path.basename(f.name)))
 
     return response
 
