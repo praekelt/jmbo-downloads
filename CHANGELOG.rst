@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.0.6
+-----
+#. Add `DOWNLOAD_INTERNAL_REDIRECT_HEADER` setting (default 'X-Accel-Redirect') in case a webserver other than Nginx is used.
+#. Add `DOWNLOAD_SERVE_FROM` setting (default 'LOCAL') to specify whether to serve the files locally or redirect to a remote location.
+
 0.0.5
 -----
 #. Fix bug where X-Accel-Redirect uses file name override instead of actual file name to serve download, causing a 404 if the file name and override don't match.
