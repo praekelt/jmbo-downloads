@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jmbo-downloads',
-    version='0.0.5',
+    version='0.0.6',
     description='Downloads for Jmbo.',
     long_description=(open('README.rst', 'r').read() +
                         open('AUTHORS.rst', 'r').read() +
@@ -17,10 +17,11 @@ setup(
     ],
     include_package_data=True,
     tests_require=[
+        'jmbo>=1.0',
         'django-setuptest',
         'coverage',
     ],
-    test_suite="setuptest.SetupTestSuite",
+    test_suite="setuptest.setuptest.SetupTestSuite",
     classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: BSD License",

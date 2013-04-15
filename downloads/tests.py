@@ -23,6 +23,7 @@ class DownloadsTestCase(TestCase):
         self.client = Client()
         self.client.login(username=self.username, password=self.password)
         self.signal_received = False
+        settings.DOWNLOAD_SERVE_FROM = 'LOCAL'
 
     def make_download(self, file_path=None, title='some_title'):
         if file_path is None:
@@ -35,7 +36,7 @@ class DownloadsTestCase(TestCase):
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
-    
+
     def receive_signal(self, sender, **kwargs):
         self.signal_received = True
 
@@ -78,3 +79,11 @@ class DownloadsTestCase(TestCase):
             reverse('download-request', kwargs={'slug': dl.slug})
         )
         self.assertTrue(self.signal_received)
+
+    def test_serve_using_redirect(self):
+        dl = self.make_download()
+        settings.DOWNLOAD_SERVE_FROM = 'REMOTE'
+        r = self.client.get(reverse('download-request', kwargs={'slug': dl.slug}))
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r['Location'].endswith(os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
+                        os.path.basename(dl.file.name))))

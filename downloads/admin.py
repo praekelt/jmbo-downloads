@@ -21,6 +21,8 @@ class DownloadAdmin(ModelBaseAdmin):
 
     def __init__(self, model, admin_site):
         super(DownloadAdmin, self).__init__(model, admin_site)
+        # add the number of downloads to Jmbo's default list display
+        self.list_display += ('view_count',)
         # magic that should go into ModelBaseAdmin at later stage
         if self.exclude:
             for field in self.exclude:
