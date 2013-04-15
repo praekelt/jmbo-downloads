@@ -2,7 +2,7 @@ import os.path
 
 from mimetypes import guess_type
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.db.models import F
@@ -13,7 +13,7 @@ from jmbo.generic.views import GenericObjectList
 
 from category.models import Category
 
-from downloads.models import Download, DOWNLOAD_FOLDER
+from downloads.models import Download, DOWNLOAD_FOLDER, TemporaryDownloadAbstract
 from downloads.signals import download_requested
 
 
@@ -35,19 +35,29 @@ def download_request(request, slug):
 
     f, file_name = download.get_file(request)
 
-    mime = guess_type(f.name)
-    response = HttpResponse(content_type=mime[0])
+    # set this to 'REMOTE' if the request should be redirected to remote storage (like S3)
+    serve_method = getattr(settings, 'DOWNLOAD_SERVE_FROM', 'LOCAL')
 
-    # check if it has encoding
-    if mime[1]:
-        response['Content-Encoding'] = mime[1]
-    response['Content-Disposition'] = 'attachment; \
-        filename="%s"' % smart_str(file_name)
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response['Expires'] = '0'
-    response['Pragma'] = 'no-store, no-cache'
-    response['X-Accel-Redirect'] = smart_str(os.path.join(settings.MEDIA_URL,
-        DOWNLOAD_FOLDER, os.path.basename(f.name)))
+    # files generated on the fly need to be served locally
+    if isinstance(download, TemporaryDownloadAbstract) or serve_method == 'LOCAL':
+        mime = guess_type(f.name)
+        response = HttpResponse(content_type=mime[0])
+
+        # check if it has encoding
+        if mime[1]:
+            response['Content-Encoding'] = mime[1]
+        response['Content-Disposition'] = 'attachment; \
+            filename="%s"' % smart_str(file_name)
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Expires'] = '0'
+        response['Pragma'] = 'no-store, no-cache'
+        response[getattr(settings, 'DOWNLOAD_INTERNAL_REDIRECT_HEADER', 'X-Accel-Redirect')] = smart_str(
+            os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER, os.path.basename(f.name))
+        )
+
+    else:
+        response = HttpResponseRedirect(smart_str(os.path.join(settings.MEDIA_URL,
+            DOWNLOAD_FOLDER, os.path.basename(f.name))))
 
     return response
 

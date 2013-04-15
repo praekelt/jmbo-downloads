@@ -20,7 +20,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': 'downloads.db',
         'USER': '',
         'PASSWORD': '',
@@ -117,12 +117,13 @@ INSTALLED_APPS = (
     'category',
     'publisher',
     'secretballot',
-
+    'atlas',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.gis',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
