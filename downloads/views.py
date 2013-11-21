@@ -39,7 +39,7 @@ def download_request(request, slug):
     serve_method = getattr(settings, 'DOWNLOAD_SERVE_FROM', 'LOCAL')
 
     # files generated on the fly need to be served locally
-    if isinstance(download, TemporaryDownloadAbstract) or serve_method == 'LOCAL':
+    if serve_method == 'LOCAL':
         mime = guess_type(f.name)
         response = HttpResponse(content_type=mime[0])
 
