@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.0.8
+-----
+#. Correct calculation of download URL, particularly for temporary downloads.
+#. Lots of PEP8 fixes.
+
 0.0.7
 -----
 #. Temporary downloads adhere to `DOWNLOAD_SERVE_FROM` setting. They are always created on the local filesystem though. If 'REMOTE' is used the developer needs to sync these files with a remote filesystem.
