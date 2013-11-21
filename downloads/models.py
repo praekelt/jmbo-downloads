@@ -78,8 +78,7 @@ class TemporaryDownloadAbstract(Download):
 
     def get_file(self, request):
         file_name = self.make_file_name(request)
-        file_path = os.path.join(os.path.join(settings.MEDIA_ROOT,
-            TEMP_ROOT), file_name)
+        file_path = os.path.join(settings.MEDIA_ROOT, TEMP_ROOT, file_name)
         # check if file exists
         try:
             f = open(file_path)
@@ -109,7 +108,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
 
     def make_file_name(self, request):
         return super(TextOverlayTemporaryDownload,
-            self).make_file_name(request, 'jpg')
+                     self).make_file_name(request, 'jpg')
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
@@ -120,7 +119,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         box = (self.x, self.y, self.width, self.height)
         line_height = int(self.font_size * 0.85)
         image = Image.open(os.path.join(settings.MEDIA_ROOT,
-            self.background_image.name)).copy()
+                                        self.background_image.name)).copy()
         draw = ImageDraw.Draw(image)
         # draw text with line breaking
         height = 0
@@ -128,8 +127,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         for word in self.text.split(' '):
             size = draw.textsize(line + word, font=self._font)
             if size[0] > box[2]:
-                self.draw_text(draw,
-                    (box[0], box[1] + height), line[0:-1])
+                self.draw_text(draw, (box[0], box[1] + height), line[0:-1])
                 line = word + ' '
                 height += line_height
             else:

@@ -29,10 +29,10 @@ class CategoryNode(template.Node):
     def render(self, context):
         extra = {
             'category': self.category_dict.resolve(context),
-            'first': self.first if type(self.first) == bool
-                else self.first.resolve(context),
-            'last': self.last if type(self.last) == bool
-                else self.last.resolve(context),
+            'first': (self.first if type(self.first) == bool
+                      else self.first.resolve(context)),
+            'last': (self.last if type(self.last) == bool
+                     else self.last.resolve(context)),
         }
         return render_to_string(
             'downloads/inclusion_tags/download_category.html',

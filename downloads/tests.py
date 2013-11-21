@@ -29,10 +29,10 @@ class DownloadsTestCase(TestCase):
         if file_path is None:
             # Just grab this actual file as a test file
             file_path = os.path.join(settings.PROJECT_ROOT, 'downloads',
-                            __file__)
+                                     __file__)
         content_file = DjangoFile(open(file_path, 'r'), 'test_file.py')
         dl = Download.objects.create(file=content_file, title=title,
-                                        image=content_file, state='published')
+                                     image=content_file, state='published')
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
@@ -55,9 +55,7 @@ class DownloadsTestCase(TestCase):
         response = self.client.get(
             reverse('download-request', kwargs={'slug': dl.slug})
         )
-        self.assertEqual(response['X-Accel-Redirect'],
-            os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
-                            os.path.basename(dl.file.name)))
+        self.assertEqual(response['X-Accel-Redirect'], dl.file.url)
 
     def test_duplicate_filenames(self):
         """Two files with the same name are uploaded"""
@@ -83,7 +81,7 @@ class DownloadsTestCase(TestCase):
     def test_serve_using_redirect(self):
         dl = self.make_download()
         settings.DOWNLOAD_SERVE_FROM = 'REMOTE'
-        r = self.client.get(reverse('download-request', kwargs={'slug': dl.slug}))
+        r = self.client.get(reverse('download-request',
+                                    kwargs={'slug': dl.slug}))
         self.assertEqual(r.status_code, 302)
-        self.assertTrue(r['Location'].endswith(os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
-                        os.path.basename(dl.file.name))))
+        self.assertEqual('/%s' % r['Location'].split('/', 3)[3], dl.file.url)
