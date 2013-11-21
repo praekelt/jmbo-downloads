@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'publisher',
     'secretballot',
     'atlas',
+    'south',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
