@@ -15,8 +15,11 @@ class ColourField(models.CharField):
         super(ColourField, self).__init__(*args, **kwargs)
 
     def formfield(self, *args, **kwargs):
-        kwargs['validators'] = [RegexValidator(r'^#[\da-f]{6}$',
-            _(u'Enter a hexadecimal-format colour.'), 'Invalid')]
+        kwargs['validators'] = [
+            RegexValidator(r'^#[\da-f]{6}$',
+                           _(u'Enter a hexadecimal-format colour.'),
+                           'Invalid')
+        ]
         return super(ColourField, self).formfield(*args, **kwargs)
 
 

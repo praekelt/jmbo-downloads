@@ -33,7 +33,8 @@ def download_request(request, slug):
 
     f, file_name = download.get_file(request)
 
-    # set this to 'REMOTE' if the request should be redirected to remote storage (like S3)
+    # set this to 'REMOTE' if the request should be redirected
+    # to remote storage (like S3)
     serve_method = getattr(settings, 'DOWNLOAD_SERVE_FROM', 'LOCAL')
 
     # files generated on the fly need to be served locally
@@ -44,12 +45,13 @@ def download_request(request, slug):
         # check if it has encoding
         if mime[1]:
             response['Content-Encoding'] = mime[1]
-        response['Content-Disposition'] = 'attachment; \
-            filename="%s"' % smart_str(file_name)
+        response['Content-Disposition'] = ('attachment; filename="%s"'
+                                           % smart_str(file_name))
         response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response['Expires'] = '0'
         response['Pragma'] = 'no-store, no-cache'
-        response[getattr(settings, 'DOWNLOAD_INTERNAL_REDIRECT_HEADER', 'X-Accel-Redirect')] = smart_str(f.url)
+        response[getattr(settings, 'DOWNLOAD_INTERNAL_REDIRECT_HEADER',
+                         'X-Accel-Redirect')] = smart_str(f.url)
 
     else:
         response = HttpResponseRedirect(smart_str(f.url))
@@ -63,14 +65,22 @@ class ObjectList(GenericObjectList):
         dls = list(Download.permitted.all())
 
         # create dictionary of categories
-        cat_dict = SortedDict((id, {'parent': parent, 'title': title,
-            'items': [], 'subcats': [], 'slug': slug, 'child_count': 0})
-                for (id, parent, title, slug)
-                in Category.objects.values_list('id', 'parent',
-                    'title', 'slug'))
+        cat_dict = SortedDict((id, {'parent': parent,
+                                    'title': title,
+                                    'items': [],
+                                    'subcats': [],
+                                    'slug': slug,
+                                    'child_count': 0})
+                              for (id, parent, title, slug) in
+                              Category.objects.values_list('id', 'parent',
+                                                           'title', 'slug'))
         # add None key for downloads without a category
-        cat_dict[None] = {'parent': None, 'items': [],
-            'child_count': 0, 'subcats': []}
+        cat_dict[None] = {
+            'parent': None,
+            'items': [],
+            'child_count': 0,
+            'subcats': []
+        }
 
         # add downloads to category item lists
         for dl in dls:
