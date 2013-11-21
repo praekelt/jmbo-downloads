@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.sites.models import Site
 
-from downloads.models import Download, DOWNLOAD_FOLDER
+from downloads.models import Download
 from downloads.signals import download_requested
 
 
