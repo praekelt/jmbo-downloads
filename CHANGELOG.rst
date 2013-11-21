@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.0.7
+-----
+#. Temporary downloads adhere to `DOWNLOAD_SERVE_FROM` setting. They are always created on the local filesystem though. If 'REMOTE' is used the developer needs to sync these files with a remote filesystem.
+
 0.0.6
 -----
 #. Add `DOWNLOAD_INTERNAL_REDIRECT_HEADER` setting (default 'X-Accel-Redirect') in case a webserver other than Nginx is used.
