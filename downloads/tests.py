@@ -55,9 +55,7 @@ class DownloadsTestCase(TestCase):
         response = self.client.get(
             reverse('download-request', kwargs={'slug': dl.slug})
         )
-        self.assertEqual(response['X-Accel-Redirect'],
-            os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
-                            os.path.basename(dl.file.name)))
+        self.assertEqual(response['X-Accel-Redirect'], dl.file.url)
 
     def test_duplicate_filenames(self):
         """Two files with the same name are uploaded"""
@@ -85,5 +83,4 @@ class DownloadsTestCase(TestCase):
         settings.DOWNLOAD_SERVE_FROM = 'REMOTE'
         r = self.client.get(reverse('download-request', kwargs={'slug': dl.slug}))
         self.assertEqual(r.status_code, 302)
-        self.assertTrue(r['Location'].endswith(os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER,
-                        os.path.basename(dl.file.name))))
+        self.assertEqual('/%s' % r['Location'].split('/', 3)[3], dl.file.url)

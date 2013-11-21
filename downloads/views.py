@@ -1,5 +1,3 @@
-import os.path
-
 from mimetypes import guess_type
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -13,7 +11,7 @@ from jmbo.generic.views import GenericObjectList
 
 from category.models import Category
 
-from downloads.models import Download, DOWNLOAD_FOLDER, TemporaryDownloadAbstract
+from downloads.models import Download
 from downloads.signals import download_requested
 
 
@@ -51,13 +49,10 @@ def download_request(request, slug):
         response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response['Expires'] = '0'
         response['Pragma'] = 'no-store, no-cache'
-        response[getattr(settings, 'DOWNLOAD_INTERNAL_REDIRECT_HEADER', 'X-Accel-Redirect')] = smart_str(
-            os.path.join(settings.MEDIA_URL, DOWNLOAD_FOLDER, os.path.basename(f.name))
-        )
+        response[getattr(settings, 'DOWNLOAD_INTERNAL_REDIRECT_HEADER', 'X-Accel-Redirect')] = smart_str(f.url)
 
     else:
-        response = HttpResponseRedirect(smart_str(os.path.join(settings.MEDIA_URL,
-            DOWNLOAD_FOLDER, os.path.basename(f.name))))
+        response = HttpResponseRedirect(smart_str(f.url))
 
     return response
 
