@@ -35,7 +35,7 @@ class DownloadsTestCase(TestCase):
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
-    
+
     def receive_signal(self, sender, **kwargs):
         self.signal_received = True
 

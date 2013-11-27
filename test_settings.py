@@ -20,7 +20,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': 'downloads.db',
         'USER': '',
         'PASSWORD': '',
@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'downloads',
     'jmbo',
     'photologue',
+    'atlas',
     'category',
     'publisher',
     'secretballot',
@@ -127,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'south'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -151,3 +153,5 @@ LOGGING = {
         },
     }
 }
+
+SOUTH_TESTS_MIGRATE = False
