@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jmbo-downloads',
-    version='0.0.4',
+    version='0.0.8',
     description='Downloads for Jmbo.',
     long_description=(open('README.rst', 'r').read() +
                         open('AUTHORS.rst', 'r').read() +
@@ -13,11 +13,12 @@ setup(
     url='http://github.com/praekelt/jmbo-downloads',
     packages = find_packages(),
     install_requires = [
-        'jmbo>=0.1.20'
+        'jmbo>=1.0'
     ],
     include_package_data=True,
     tests_require=[
         'django-setuptest>=0.1.2',
+        'jmbo>=1.0',
     ],
     test_suite="setuptest.setuptest.SetupTestSuite",
     classifiers=[

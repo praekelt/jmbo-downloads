@@ -16,7 +16,8 @@ Installation
     - Define an internal location at MEDIA_URL/downloads/(.*) in your site's Nginx config.
     - Set its alias to MEDIA_ROOT/downloads/$1.
     - If you are using Jmbo with buildout, add this to the appropriate buildout template.
-4. If you are using another webserver, you will have to modify the ``downloads-request`` view. Change the X-Accel-Redirect header to the correct header for you webserver. You will also want to change your server config so that the downloads root folder is not directly accessible by users.
+4. If you are using another webserver you will have to specify the internal redirection header by putting ``DOWNLOAD_INTERNAL_REDIRECT_HEADER`` in your settings.
+5. If files are hosted remotely set ``DOWNLOAD_SERVE_FROM`` to 'REMOTE'. The client will be redirected to the remote location.
 
 Requirements
 ------------

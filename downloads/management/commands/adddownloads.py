@@ -21,24 +21,30 @@ class Command(BaseCommand):
     args = '<folder_path>'
     help = 'Adds all files on <folder_path> as downloadable files'
     option_list = BaseCommand.option_list + (
-        make_option('--category',
+        make_option(
+            '--category',
             action='store',
             type='string',
             dest='category',
             default=None,
-            help='Primary category for the downloads'),
-        make_option('-r',
+            help='Primary category for the downloads'
+        ),
+        make_option(
+            '-r',
             action='store_true',
             dest='recursive',
-            help='Recursively add files'),
-        make_option('--publish',
+            help='Recursively add files'
+        ),
+        make_option(
+            '--publish',
             action='callback',
             type='string',
             callback=split_callback,
             dest='sites',
             default=False,
-            help='List of comma-separated domain names to publish to'),
-        )
+            help='List of comma-separated domain names to publish to'
+        ),
+    )
 
     def handle(self, *args, **options):
         if len(args) > 0:
@@ -54,15 +60,16 @@ class Command(BaseCommand):
                 sites = []
                 for site in options['sites']:
                     sites.append(re.escape(site))
-                sites = Site.objects.filter(
-                    domain__regex=r'(' + '|'.join(sites) + ')')
+                sites = Site.objects.filter(domain__regex=
+                                            r'(' + '|'.join(sites) + ')')
 
             count = 0
             for root, dir, files in os.walk(args[0]):
                 for name in files:
                     self.stdout.write('Adding ' + root + '/' + name + '\n')
                     download = Download(title=name,
-                        primary_category=category, state=state)
+                                        primary_category=category,
+                                        state=state)
                     download.save()
                     for site in sites:
                         download.sites.add(site)

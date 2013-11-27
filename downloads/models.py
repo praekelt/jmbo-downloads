@@ -14,18 +14,17 @@ from downloads.fields import ColourField
 from downloads.managers import VisibleManager
 
 
-# root of all downloadable files
-DOWNLOAD_FOLDER = 'downloads'
-DOWNLOAD_ROOT = os.path.join(settings.MEDIA_ROOT, DOWNLOAD_FOLDER)
+# path of all downloadable files
+DOWNLOAD_UPLOAD_FOLDER = 'downloads'
 # path to media required for image modifications
-MOD_MEDIA_ROOT = os.path.join(DOWNLOAD_ROOT, 'mods')
+MOD_MEDIA_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, 'mods')
 # where temporary downloadable files are kept
-TEMP_ROOT = os.path.join(DOWNLOAD_ROOT, 'tmp')
+TEMP_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, 'tmp')
 
 
 class Download(ModelBase):
     file = models.FileField(
-        upload_to=DOWNLOAD_ROOT,
+        upload_to=DOWNLOAD_UPLOAD_FOLDER,
         max_length=255,
         null=True,
         blank=True
@@ -78,8 +77,8 @@ class TemporaryDownloadAbstract(Download):
 
     def get_file(self, request):
         file_name = self.make_file_name(request)
-        file_path = os.path.join(os.path.join(settings.MEDIA_ROOT,
-            TEMP_ROOT), file_name)
+        file_path = os.path.join(settings.MEDIA_ROOT, TEMP_UPLOAD_FOLDER,
+                                 file_name)
         # check if file exists
         try:
             f = open(file_path)
@@ -88,13 +87,13 @@ class TemporaryDownloadAbstract(Download):
         except IOError:
             self.create_file(file_path, request)
         # not saved to db since the files are temporary
-        self.file.name = os.path.join(TEMP_ROOT, file_name)
+        self.file.name = os.path.join(TEMP_UPLOAD_FOLDER, file_name)
 
         return super(TemporaryDownloadAbstract, self).get_file(request)
 
 
 class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
-    background_image = models.ImageField(upload_to=MOD_MEDIA_ROOT)
+    background_image = models.ImageField(upload_to=MOD_MEDIA_UPLOAD_FOLDER)
     text = models.TextField()
     x = models.PositiveIntegerField()
     y = models.PositiveIntegerField()
@@ -109,7 +108,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
 
     def make_file_name(self, request):
         return super(TextOverlayTemporaryDownload,
-            self).make_file_name(request, 'jpg')
+                     self).make_file_name(request, 'jpg')
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
@@ -119,8 +118,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         self._colour = str(self.colour)
         box = (self.x, self.y, self.width, self.height)
         line_height = int(self.font_size * 0.85)
-        image = Image.open(os.path.join(settings.MEDIA_ROOT,
-            self.background_image.name)).copy()
+        image = Image.open(self.background_image.path).copy()
         draw = ImageDraw.Draw(image)
         # draw text with line breaking
         height = 0
@@ -128,8 +126,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         for word in self.text.split(' '):
             size = draw.textsize(line + word, font=self._font)
             if size[0] > box[2]:
-                self.draw_text(draw,
-                    (box[0], box[1] + height), line[0:-1])
+                self.draw_text(draw, (box[0], box[1] + height), line[0:-1])
                 line = word + ' '
                 height += line_height
             else:
