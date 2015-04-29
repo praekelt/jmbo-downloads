@@ -11,6 +11,9 @@ from django.contrib.sites.models import Site
 from downloads.models import Download
 from downloads.signals import download_requested
 
+RES_DIR = os.path.join(os.path.dirname(__file__), 'res')
+FILE_PATH = os.path.join(RES_DIR, 'test_file.py')
+
 
 class DownloadsTestCase(TestCase):
 
@@ -30,7 +33,7 @@ class DownloadsTestCase(TestCase):
             # Just grab this actual file as a test file
             file_path = os.path.join(settings.PROJECT_ROOT, 'downloads',
                                      __file__)
-        content_file = DjangoFile(open(file_path, 'r'), 'test_file.py')
+        content_file = DjangoFile(open(FILE_PATH, 'r'), 'test_file.py')
         dl = Download.objects.create(file=content_file, title=title,
                                      image=content_file, state='published')
         # Must publish it to a site for it to become available
@@ -84,4 +87,4 @@ class DownloadsTestCase(TestCase):
         r = self.client.get(reverse('download-request',
                                     kwargs={'slug': dl.slug}))
         self.assertEqual(r.status_code, 302)
-        self.assertEqual('/%s' % r['Location'].split('/', 3)[3], dl.file.url)
+        self.assertEqual(r['Location'].split('/', 4)[4], dl.file.url)
