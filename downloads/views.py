@@ -7,7 +7,7 @@ from django.db.models import F
 from django.conf import settings
 from django.utils.datastructures import SortedDict
 
-from jmbo.generic.views import GenericObjectList
+from jmbo.views import ObjectList as JmboObjectList
 
 from category.models import Category
 
@@ -59,7 +59,7 @@ def download_request(request, slug):
     return response
 
 
-class ObjectList(GenericObjectList):
+class ObjectList(JmboObjectList):
 
     def get_extra_context(self, *args, **kwargs):
         dls = list(Download.permitted.all())
@@ -119,5 +119,3 @@ class ObjectList(GenericObjectList):
 
     def get_template_name(self, *args, **kwargs):
         return "downloads/download_list_category.html"
-
-object_list = ObjectList()

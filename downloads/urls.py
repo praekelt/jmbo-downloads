@@ -1,6 +1,6 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
-from downloads.views import object_list, download_request
+from downloads.views import ObjectList, download_request
 
 
 urlpatterns = patterns(
@@ -8,7 +8,7 @@ urlpatterns = patterns(
     # download url
     url(
         r'^$',
-        object_list,
+        ObjectList.as_view(),
         name='downloads'
     ),
     url(
