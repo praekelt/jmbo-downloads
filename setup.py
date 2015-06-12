@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jmbo-downloads',
-    version='2.0.0a1',
+    version='2.0.0',
     description='Downloads for Jmbo.',
     long_description=(open('README.rst', 'r').read() +
                         open('AUTHORS.rst', 'r').read() +
@@ -13,7 +13,7 @@ setup(
     url='http://github.com/praekelt/jmbo-downloads',
     packages = find_packages(),
     install_requires = [
-        'jmbo==2.0.0a2'
+        'jmbo==2.0.0'
     ],
     include_package_data=True,
     tests_require=[
