@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next
-----
+2.0.1
+-----
 #. Guard against deletion error where database and filesystem is out of synch.
 
 2.0.0
