@@ -51,7 +51,7 @@ class Download(ModelBase):
             return (self.file, os.path.basename(self.file.name))
 
     def delete(self):
-        if os.path.exists(self.file.path):
+        if self.file and os.path.exists(self.file.path):
             os.remove(self.file.path)
         super(Download, self).delete()
 
