@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.2
+-----
+#. Remove explicit jmbo version pin.
+
 2.0.1
 -----
 #. Guard against deletion error where database and filesystem is out of synch.
