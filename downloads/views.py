@@ -5,7 +5,7 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.db.models import F
 from django.conf import settings
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 
 from jmbo.views import ObjectList as JmboObjectList
 
@@ -17,7 +17,7 @@ from downloads.signals import download_requested
 
 def download_request(request, slug):
     # explicitly pass True to get_query_set to include invisible downloads
-    download = Download.permitted.get_query_set(True).get(slug=slug)
+    download = Download.permitted.get_queryset(True).get(slug=slug)
     download = download.as_leaf_class()
 
     # increment view count
@@ -65,7 +65,7 @@ class ObjectList(JmboObjectList):
         dls = list(Download.permitted.all())
 
         # create dictionary of categories
-        cat_dict = SortedDict((id, {'parent': parent,
+        cat_dict = OrderedDict((id, {'parent': parent,
                                     'title': title,
                                     'items': [],
                                     'subcats': [],

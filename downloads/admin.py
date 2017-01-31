@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models.query import QuerySet
 
 from jmbo.admin import ModelBaseAdmin, ModelBaseAdminForm
 

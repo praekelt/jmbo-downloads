@@ -5,3 +5,7 @@
 /*.egg-info/
 coverage.xml
 pep8.txt
+.tox/
+.coverage
+*.db
+.idea/

@@ -1,11 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from downloads.views import ObjectList, download_request
 
 
-urlpatterns = patterns(
-    '',
-    # download url
+urlpatterns = [
     url(
         r'^$',
         ObjectList.as_view(),
@@ -15,5 +13,5 @@ urlpatterns = patterns(
         r'^(?P<slug>[\w-]+)/$',
         download_request,
         name='download-request'
-    ),
-)
+    )
+]

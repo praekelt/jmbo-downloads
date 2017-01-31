@@ -1,6 +1,8 @@
 import os
 from os.path import expanduser
 
+SECRET_KEY = "SECRET_KEY_PLACEHOLDER"
+
 DEBUG = True
 
 DATABASES = {
@@ -23,16 +25,13 @@ INSTALLED_APPS = (
     'secretballot',
 
     'pagination',
-    'publisher',
     'sites_groups',
 
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.comments',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
-    'south',
+    'django.contrib.sites'
 )
 
 ROOT_URLCONF = 'downloads.urls'
