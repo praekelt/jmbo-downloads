@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('jmbo', '0006_auto_20170201_0948'),
+        ('jmbo', '0005_modelbase_layers'),
     ]
 
     operations = [
