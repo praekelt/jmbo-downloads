@@ -3,6 +3,7 @@ import uuid
 
 from django.db import models
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from PIL import Image
 from PIL import ImageFont
@@ -41,8 +42,8 @@ class Download(ModelBase):
         ordering = ['primary_category', 'title']
 
     @models.permalink
-    def get_absolute_url(self):
-        return ('downloads.views.download_request', (self.slug,))
+    def get_absolute_url(self, category=None):
+        return reverse("download-request", args=self.slug)
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
@@ -51,7 +52,7 @@ class Download(ModelBase):
         else:
             return (self.file, os.path.basename(self.file.name))
 
-    def delete(self):
+    def delete(self, using=None, keep_parents=False):
         if self.file and os.path.exists(self.file.path):
             os.remove(self.file.path)
         super(Download, self).delete()
