@@ -23,10 +23,8 @@ INSTALLED_APPS = (
     'category',
     'likes',
     'secretballot',
-
     'pagination',
     'sites_groups',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

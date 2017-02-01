@@ -35,6 +35,7 @@ class Download(ModelBase):
         blank=True
     )
     visible = models.BooleanField(default=True)
+    view_count = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['primary_category', 'title']
