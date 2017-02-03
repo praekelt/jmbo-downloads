@@ -16,11 +16,11 @@ from downloads.managers import VisibleManager
 
 
 # path of all downloadable files
-DOWNLOAD_UPLOAD_FOLDER = 'downloads'
+DOWNLOAD_UPLOAD_FOLDER = "downloads"
 # path to media required for image modifications
-MOD_MEDIA_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, 'mods')
+MOD_MEDIA_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, "mods")
 # where temporary downloadable files are kept
-TEMP_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, 'tmp')
+TEMP_UPLOAD_FOLDER = os.path.join(DOWNLOAD_UPLOAD_FOLDER, "tmp")
 
 
 class Download(ModelBase):
@@ -39,7 +39,7 @@ class Download(ModelBase):
     view_count = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['primary_category', 'title']
+        ordering = ["primary_category", "title"]
 
     # return 2-tuple containing the file and response file name
     def get_file(self, request):
@@ -62,7 +62,7 @@ class TemporaryDownloadAbstract(Download):
     class Meta:
         abstract = True
 
-    def make_file_name(self, request, extension=''):
+    def make_file_name(self, request, extension=""):
         if self.unique_per_user:
             id = str(uuid.UUID(int=request.user.id))
         else:
@@ -98,7 +98,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
     font = models.FilePathField(
-        path='/usr/share/fonts/truetype/',
+        path="/usr/share/fonts/truetype/",
         recursive=True
     )
     font_size = models.PositiveIntegerField()
@@ -106,7 +106,7 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
 
     def make_file_name(self, request):
         return super(TextOverlayTemporaryDownload,
-                     self).make_file_name(request, 'jpg')
+                     self).make_file_name(request, "jpg")
 
     def draw_text(self, drawable, pos, text):
         drawable.text(pos, text, font=self._font, fill=self._colour)
@@ -120,23 +120,23 @@ class TextOverlayTemporaryDownload(TemporaryDownloadAbstract):
         draw = ImageDraw.Draw(image)
         # draw text with line breaking
         height = 0
-        line = ''
-        for word in self.text.split(' '):
+        line = ""
+        for word in self.text.split(" "):
             size = draw.textsize(line + word, font=self._font)
             if size[0] > box[2]:
                 self.draw_text(draw, (box[0], box[1] + height), line[0:-1])
-                line = word + ' '
+                line = word + " "
                 height += line_height
             else:
-                line += word + ' '
+                line += word + " "
         self.draw_text(draw, (box[0], box[1] + height), line[0:-1])
         del draw
         image.save(file_path)
 
 
-# replace Jmbo's permitted manager
+# replace Jmbo"s permitted manager
 def set_download_manager(cls):
-    cls.add_to_class('permitted', VisibleManager())
+    cls.add_to_class("permitted", VisibleManager())
     for c in cls.__subclasses__():
         set_download_manager(c)
 

@@ -7,8 +7,7 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r"^admin/", include(admin.site.urls)),
-    url(r"^jmbo/", include("jmbo.urls")),
-    url(r"^comments/", include("django_comments.urls")),
-    url(r"^ckeditor/", include("ckeditor.urls")),
-    url(r"^download/", include("downloads.urls"))
+    url(r"^jmbo/", include("jmbo.urls", namespace="jmbo")),
+    url(r"^download/", include("downloads.urls", namespace="downloads")),
+    url(r"^comments/", include("django_comments.urls"))
 ]

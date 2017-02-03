@@ -15,7 +15,7 @@ def render_category(parser, token):
             return CategoryNode(category_dict)
         except ValueError:
             raise template.TemplateSyntaxError(
-                'render_category tag requires argument category_dict'
+                "render_category tag requires argument category_dict"
             )
 
 
@@ -28,13 +28,13 @@ class CategoryNode(template.Node):
 
     def render(self, context):
         extra = {
-            'category': self.category_dict.resolve(context),
-            'first': (self.first if type(self.first) == bool
+            "category": self.category_dict.resolve(context),
+            "first": (self.first if type(self.first) == bool
                       else self.first.resolve(context)),
-            'last': (self.last if type(self.last) == bool
+            "last": (self.last if type(self.last) == bool
                      else self.last.resolve(context)),
         }
         return render_to_string(
-            'downloads/inclusion_tags/download_category.html',
+            "downloads/inclusion_tags/download_category.html",
             extra
         )

@@ -8,31 +8,38 @@ USE_TZ = True
 TIME_ZONE = "Africa/Johannesburg"
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase'
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "jmbo",
+        "USER": "postgres",
+        "PASSWORD": "password",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
 INSTALLED_APPS = (
     "downloads",
-    "test_without_migrations",
+    "downloads.tests",
     "jmbo",
     "photologue",
     "category",
-    "ckeditor",
     "django_comments",
     "likes",
     "secretballot",
     "pagination",
     "preferences",
-    "ultracache",
     "sites_groups",
+
+    # Django apps can be alphabetic
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.sites",
+
+    # These apps have no templates
+    "crum",
     "layers"
 )
 
@@ -59,19 +66,6 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.messages.context_processors.messages",
 ]
 
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.realpath(os.path.dirname(__file__)) + "/../templates/",
-        ],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": TEMPLATE_CONTEXT_PROCESSORS,
-        },
-    },
-]
-
 SITE_ID = 1
 
 STATIC_URL = "/static/"
@@ -83,12 +77,6 @@ BROKER_BACKEND = "memory"
 SECRET_KEY = "SECRET_KEY"
 
 DEBUG = True
-
-# Ultracache triggers lazy creation of content types. This prevents that code
-# path.
-ULTRACACHE = {"invalidate": False}
-
-CKEDITOR_UPLOAD_PATH = expanduser("~")
 
 REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning"

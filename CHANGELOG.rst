@@ -1,6 +1,13 @@
 Changelog
 =========
 
+next
+----
+#. Jmbo 3 and Django 1.9 compatibility.
+#. Tox integration.
+#. Added downloads.tests app.
+
+
 2.0.2
 -----
 #. Remove explicit jmbo version pin.

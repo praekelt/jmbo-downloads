@@ -20,15 +20,15 @@ class DownloadAdmin(ModelBaseAdmin):
 
     def __init__(self, model, admin_site):
         super(DownloadAdmin, self).__init__(model, admin_site)
-        # add the number of downloads to Jmbo's default list display
-        self.list_display += ('view_count',)
+        # add the number of downloads to Jmbo"s default list display
+        self.list_display += ("view_count",)
         # magic that should go into ModelBaseAdmin at later stage
         if self.exclude:
             for field in self.exclude:
                 try:
-                    fields = self.fieldsets[0][1]['fields']
+                    fields = self.fieldsets[0][1]["fields"]
                     i = fields.index(field)
-                    self.fieldsets[0][1]['fields'] = fields[0:i] + \
+                    self.fieldsets[0][1]["fields"] = fields[0:i] + \
                         fields[i + 1:]
                 except:
                     continue
@@ -43,7 +43,7 @@ class DownloadAdmin(ModelBaseAdmin):
 
 
 class ImageModAdmin(DownloadAdmin):
-    exclude = ('file',)  # file is generated
+    exclude = ("file",)  # file is generated
 
 
 class TextOverlayImageModAdmin(ImageModAdmin):
@@ -51,18 +51,18 @@ class TextOverlayImageModAdmin(ImageModAdmin):
 
     def __init__(self, model, admin_site):
         super(TextOverlayImageModAdmin, self).__init__(model, admin_site)
-        one_liners = (('x', 'y', 'width', 'height'), ('font', 'font_size'))
+        one_liners = (("x", "y", "width", "height"), ("font", "font_size"))
         # magic that should go into ModelBaseAdmin at later stage
         for line in one_liners:
             for field in line:
                 try:
-                    fields = self.fieldsets[0][1]['fields']
+                    fields = self.fieldsets[0][1]["fields"]
                     i = fields.index(field)
-                    self.fieldsets[0][1]['fields'] = fields[0:i] + \
+                    self.fieldsets[0][1]["fields"] = fields[0:i] + \
                         fields[i + 1:]
                 except:
                     continue
-        self.fieldsets[0][1]['fields'] += one_liners
+        self.fieldsets[0][1]["fields"] += one_liners
 
 
 admin.site.register(Download, DownloadAdmin)

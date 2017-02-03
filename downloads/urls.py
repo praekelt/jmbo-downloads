@@ -5,13 +5,13 @@ from downloads.views import ObjectList, download_request
 
 urlpatterns = [
     url(
-        r'^$',
+        r"^$",
         ObjectList.as_view(),
-        name='downloads'
+        name="downloads"
     ),
     url(
-        r'^(?P<slug>[\w-]+)/$',
+        r"^(?P<slug>[\w-]+)/$",
         download_request,
-        name='download-request'
+        name="download-request"
     )
 ]
