@@ -24,7 +24,6 @@ Requirements
 
 - Django 1.3 and above
 - Jmbo and all its requirements
-- South
 
 Other features (the fun stuff)
 ------------------------------
