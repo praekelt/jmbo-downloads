@@ -31,8 +31,7 @@ class DownloadsTestCase(TestCase):
 
     def make_download(self, title="some_title"):
         content_file = DjangoFile(open(FILE_PATH, "r"), "test_file.py")
-        dl = Download.objects.create(file=content_file, title=title,
-                                     image=content_file, state="published")
+        dl = Download.objects.create(file=content_file, title=title, state="published")
         # Must publish it to a site for it to become available
         dl.sites.add(Site.objects.all()[0])
         return dl
