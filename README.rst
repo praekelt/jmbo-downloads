@@ -1,15 +1,18 @@
 Jmbo Downloads
 ==============
-**Downloads for Jmbo.**
+**Downloads for Jmbo**
 
 .. image:: https://travis-ci.org/praekelt/jmbo-downloads.svg
     :target: https://travis-ci.org/praekelt/jmbo-downloads
 
-.. image:: https://coveralls.io/github/praekelt/jmbo-downloads/badge.svg?branch=develop
+.. image:: https://coveralls.io/repos/github/praekelt/jmbo-downloads/badge.svg?branch=develop
     :target: https://coveralls.io/github/praekelt/jmbo-downloads?branch=develop
 
 .. contents:: Contents
     :depth: 5
+
+Overview
+========
 
 Jmbo Downloads allows you to easily create and serve downloadable content on your Jmbo sites. Files are uploaded via the admin interface, or generated per request,
 and served by your webserver. These downloads can then be tracked - Jmbo Downloads, by default, tracks the total downloads for each item.
