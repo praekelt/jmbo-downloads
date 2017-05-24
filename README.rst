@@ -22,7 +22,7 @@ Installation
 Requirements
 ------------
 
-- Django 1.3 and above
+- Django 1.11 and above
 - Jmbo and all its requirements
 
 Other features (the fun stuff)
