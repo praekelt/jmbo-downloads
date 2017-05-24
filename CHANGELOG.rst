@@ -3,7 +3,7 @@ Changelog
 
 next
 ----
-#. Jmbo 3 and Django 1.9 compatibility.
+#. Jmbo 3 and Django 1.11 compatibility.
 #. Tox integration.
 #. Added downloads.tests app.
 
